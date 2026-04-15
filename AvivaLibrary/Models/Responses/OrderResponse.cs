@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AvivaLibrary.Models.Responses
+﻿namespace AvivaLibrary.Models.Responses
 {
     /// <summary>
     /// {
@@ -33,8 +29,12 @@ namespace AvivaLibrary.Models.Responses
         public string Method { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public List<Fee> Fees { get; set; } =[];
-        public List<Product> Products { get; set; } = [];
-        public string CreatedBy { get; set; } = string.Empty;
-        public DateTime CreatedDate { get; set; }
+        public List<Product> Products { get; set; } = [];        
+
+        /// <summary>
+        /// This name should be added by the API to know from  
+        /// what provider the order comes.
+        /// </summary>
+        public string ProviderName { get; set;} = string.Empty;
     }
 }

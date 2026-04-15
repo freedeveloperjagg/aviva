@@ -1,6 +1,7 @@
 ﻿@page "/orders"
 @namespace AvivaUI.Components.Pages
 @using AvivaLibrary.Models
+@using AvivaLibrary.Models.Responses
 @using Radzen
 @using Radzen.Blazor
 @inject NotificationService notificationService
@@ -14,8 +15,8 @@
 
         <h2 class="page-title">Orders</h2>
 
-        <RadzenDataGrid Data="@_orders"
-                        TItem="Order"
+        <RadzenDataGrid Data="@orders"
+                        TItem="OrderResponse"
                         AllowPaging="true"
                         PageSize="6"
                         AllowSorting="true"
@@ -23,25 +24,30 @@
             <Columns>
 
                 @* Order ID *@
-                <RadzenDataGridColumn TItem="Order"
+                <RadzenDataGridColumn TItem="OrderResponse"
                                       Property="OrderId"
                                       Title="Order ID"
-                                      Width="100px" />
+                                      Width="150px" />
 
                 @* Date *@
-                <RadzenDataGridColumn TItem="Order"
-                                      Property="Date"
+                <RadzenDataGridColumn TItem="OrderResponse"
+                                      Property="CreatedDate"
                                       Title="Date"
-                                      Width="120px"
+                                      Width="110px"
                                       FormatString="{0:dd/MM/yyyy}" />
 
                 @* Description *@
-                <RadzenDataGridColumn TItem="Order"
-                                      Property="Name"
-                                      Title="Description" />
+                <RadzenDataGridColumn TItem="OrderResponse"
+                                      Property="Method"
+                                      Title="Pay with"
+                                      Width="110px" />
 
+                <RadzenDataGridColumn TItem="OrderResponse"
+                                      Property="Status"
+                                      Title="Status" 
+                                      Width="110px" />
                 @* Amount *@
-                <RadzenDataGridColumn TItem="Order"
+                <RadzenDataGridColumn TItem="OrderResponse"
                                       Property="Amount"
                                       Title="Amount"
                                       Width="110px"
@@ -51,14 +57,14 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                @* Product Quantities *@
-                <RadzenDataGridColumn TItem="Order"
-                                      Property="ProductQuantities"
+                @* Product Quantities 
+                <RadzenDataGridColumn TItem="OrderResponse"
+                                      Property="products.ProductQuantities"
                                       Title="Qty"
                                       Width="70px"
                                       TextAlign="TextAlign.Center" />
-
-                @* Paid *@
+*@
+                @* Paid 
                 <RadzenDataGridColumn TItem="Order"
                                       Property="Paid"
                                       Title="Paid"
@@ -71,8 +77,9 @@
                     </Template>
                 </RadzenDataGridColumn>
 
+*@
                 @* Show Details button *@
-                <RadzenDataGridColumn TItem="Order"
+                <RadzenDataGridColumn TItem="OrderResponse"
                                       Title="Details"
                                       Width="110px"
                                       Sortable="false"
@@ -86,10 +93,11 @@
                                       Size="ButtonSize.Small"
                                       Click="@(() => ShowDetails(row))" />
                     </Template>
+
                 </RadzenDataGridColumn>
 
                 @* Pay Order button *@
-                <RadzenDataGridColumn TItem="Order"
+                <RadzenDataGridColumn TItem="OrderResponse"
                                       Title="Payment"
                                       Width="110px"
                                       Sortable="false"
@@ -101,7 +109,7 @@
                                       ButtonStyle="ButtonStyle.Success"
                                       Shade="Shade.Lighter"
                                       Size="ButtonSize.Small"
-                                      Disabled="@row.Paid"
+                                      Disabled="@CheckIsPaid(row.Status)"
                                       Click="@(() => ConfirmPayment(row))" />
                     </Template>
                 </RadzenDataGridColumn>
@@ -111,19 +119,18 @@
 
     </div>
 
-    @* ── Details dialog ── *@
-    @if (_showDetails && _selectedOrder != null)
+   @*  @* ── Details dialog ── 
+       if (_showDetails && selectedOrder != null)
     {
         <RadzenDialog>
             <div class="order-dialog">
-                <h3>Order #@_selectedOrder.OrderId</h3>
+                <h3>Order #@selectedOrder.OrderId</h3>
                 <hr />
                 <table class="dialog-table">
-                    <tr><td>Date</td>        <td>@_selectedOrder.CreatedDate.ToString("dd/MM/yyyy")</td></tr>
-                    <tr><td>Description</td> <td>@_selectedOrder.Name</td></tr>
-                    <tr><td>Amount</td>      <td>@_selectedOrder.Amount.ToString("C2")</td></tr>
-                    <tr><td>Qty</td>         <td>@_selectedOrder.ItemsCount</td></tr>
-                    <tr><td>Paid</td>        <td>@(_selectedOrder.Paid ? "Yes" : "No")</td></tr>
+                    <tr><td>Date</td>        <td>@selectedOrder.CreatedDate.ToString("dd/MM/yyyy")</td></tr>
+                    <tr><td>Payment Provider</td> <td>@selectedOrder.ProviderName</td></tr>
+                    <tr><td>Amount</td>      <td>@selectedOrder.Amount.ToString("C2")</td></tr>
+                    <tr><td>Status</td>        <td>@(selectedOrder.Status)</td></tr>
                 </table>
                 <div class="dialog-actions">
                     <RadzenButton Text="Close"
@@ -132,6 +139,6 @@
                 </div>
             </div>
         </RadzenDialog>
-    }
+    } *@
 
 </div>

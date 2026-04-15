@@ -7,6 +7,7 @@ using AvivaApi.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using System.Reflection;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,9 @@ builder.Services.AddSwaggerGen(options =>
             Email = "freedeveloper@hotmail.com"
         }
     });
+    // Build the path to the XML file
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddHttpClient("Payment");
@@ -90,6 +94,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/", () => "API is running");
+//app.MapGet("/", () => "API is running");
 
 app.Run();

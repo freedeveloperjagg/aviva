@@ -1,6 +1,7 @@
 ﻿using AvivaApi.Facade;
 using AvivaApi.Services;
 using AvivaLibrary.Models;
+using AvivaLibrary.Models.Requests;
 using AvivaLibrary.Models.Responses;
 
 namespace AvivaApi.Bo
@@ -13,6 +14,7 @@ namespace AvivaApi.Bo
         readonly IPaymentCompaniesFacade facade = xfacade;
         readonly IProviderService service = providerService;
 
+ 
         /// <summary>
         /// We need to made the payment to the entity that cost less, 
         /// so we need to calculate the total cost of the order and then get the 
@@ -54,8 +56,52 @@ namespace AvivaApi.Bo
             var provider = providers.Single(x => x.Nombre == providerName);
 
             // Call the service to made the payment
-            OrderResponse? order = await service.MakePaymentAsync(provider, orderPago);
+            OrderResponse? order = await service.CreateOrderAsync(provider, orderPago);
             return order;
+        }
+
+        /// <summary>
+        /// Get a individual Order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        public async Task<OrderResponse?> GetOrderAsync(string id, string provider)
+        {
+            OrderResponse? response = await service.GetOrderAsync(id, provider)   ;
+            return response;
+        }
+
+        /// <summary>
+        /// Get All Order s in all providers
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<OrderResponse>> GetOrdersAsync()
+        {
+            List<OrderResponse> orders = await service.GetOrdersAsync();
+            return orders;
+        }
+
+        /// <summary>
+        /// Pay a order
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task PayOrderAsync(ChangeOrderRequest request)
+        {
+            await service.PayOrderAsync(request);
+        }
+
+        /// <summary>
+        /// Cancel Order
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task CancelOrderAsync(ChangeOrderRequest request)
+        {
+            await service.CancelOrderAsync(request);
         }
     }
 }

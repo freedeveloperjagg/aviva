@@ -1,6 +1,5 @@
 ﻿using AvivaLibrary.Models;
 using AvivaLibrary.Models.Responses;
-using System.Buffers.Text;
 using System.Text;
 using System.Text.Json;
 
@@ -16,6 +15,28 @@ namespace AvivaUI.Proxies
         {
             PropertyNameCaseInsensitive = true,
         };
+
+        /// <summary>
+        /// Get All payment orders from providers
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
+        public async Task<List<OrderResponse>> GetAllOrdersFromProviders()
+        {
+            var client = factory.CreateClient();
+            client.BaseAddress = new Uri(cconfig.ApiAddress);
+
+            var result = await client.GetAsync("api/Payment/Orders");
+            string content = await result.Content.ReadAsStringAsync();
+            if (result.IsSuccessStatusCode)
+            {
+                List<OrderResponse>? orders = JsonSerializer.Deserialize<List<OrderResponse>>(content, options);
+                if (orders == null) return [];
+                return orders;
+            }
+
+            throw new ApplicationException($"Get All PAyment Oders, Error reading the proxy in {client.BaseAddress}, Error: {content}");
+        }
 
         public async Task<OrderResponse?> SendOrderPago(OrderPago pago)
         {

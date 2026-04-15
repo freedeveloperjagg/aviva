@@ -1,99 +1,107 @@
-﻿@inject DialogService dialogService
+﻿@using Radzen
+@using Radzen.Blazor
+@inject DialogService dialogService
 
-<div class="order-dialog">
+<div style="max-width:96%" class="order-dialog">
                 
-    <table class="dialog-table">
-        <tr><td>Date</td>        <td>@order.CreatedDate.ToString("dd/MM/yyyy")</td></tr>
-        <tr><td>Name</td>       <td>@order.Name</td></tr>
-        <tr><td>Amount</td>      <td>@order.Amount.ToString("C2")</td></tr>
-        <tr><td>Qty</td>         <td>@order.ItemsCount</td></tr>
-        <tr>
-            <td>Paid</td>
-            <td>
-                <RadzenBadge Text="@(order.Paid ? "Yes" : "No")"
-                             BadgeStyle="@(order.Paid ? BadgeStyle.Success : BadgeStyle.Danger)"
-                             Shade="Shade.Lighter" />
-            </td>
-        </tr>
-    </table>
-    <div>Items</div>
+    <RadzenCard Style="padding:20px;">
+        <RadzenRow>
+            <!-- Column 1 -->
+            <RadzenColumn Size="6">
+                <!-- Row 1 in Column 1 -->
+                <RadzenCard Style="margin-bottom:10px;">
+                    <h4>Provider:</h4>
+                    <p>@order.ProviderName</p>
+                </RadzenCard>
+
+                <!-- Row 2 in Column 1 -->
+                <RadzenCard>
+                    <h4>Amount</h4>
+                    <p>@order.Amount.ToString("C2")</p>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <!-- Column 2 -->
+            <RadzenColumn Size="6">
+                <!-- Row 1 in Column 2 -->
+                <RadzenCard Style="margin-bottom:10px;">
+                    <h4>Qty:</h4>
+                    <p>@ProductCount(order.Products)</p>
+                </RadzenCard>
+
+                <!-- Row 2 in Column 2 -->
+                <RadzenCard>
+                    <h4>Paid</h4>
+                    <p>
+                        <RadzenBadge Text="@(IsPaid(order.Status) ? "Yes" : "No")"
+                                     BadgeStyle="@(IsPaid(order.Status) ? BadgeStyle.Success : BadgeStyle.Danger)"
+                                     Shade="Shade.Lighter" />
+                    </p>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+    <hr /> 
+    <div><b>Products:</b></div>
     @* ── Data Grid ── *@
-    <RadzenDataGrid @ref="grid"
-                    Data="@order.Products"
+    <RadzenDataGrid Data="@order?.Products"
                     TItem="Product"
-                    AllowPaging="true"
-                    PageSize="6"
                     AllowSorting="true"
                     class="aviva-grid">
-
-       
-
-        @* Checkbox column *@
-        <RadzenDataGridColumn TItem="Product"
-                              Width="48px"
-                              Sortable="false"
-                              Filterable="false"
-                              Title="">
-        </RadzenDataGridColumn>
-
-        @* Product *@
-        <RadzenDataGridColumn TItem="Product"
-                              Property="Name"
-                              Title="Product"
-                              Width="180px" />
-
-        @* Details *@
-        <RadzenDataGridColumn TItem="Product"
-                              Property="Details"
-                              Title="Details" />
-        @* Unit Price *@
-        <RadzenDataGridColumn TItem="Product"
-                              Property="UnitPrice"
-                              Title="Unit Price"
-                              Width="110px"
-                              TextAlign="TextAlign.Right">
-            <Template Context="row">
-                @row.UnitPrice.ToString("C2")
-            </Template>
-        </RadzenDataGridColumn>
+        <Columns>
+            @* Product *@
+            <RadzenDataGridColumn TItem="Product"
+                                  Property="Name"
+                                  Title="Product"
+                                  Width="180px" />
+            @* Details *@
+            <RadzenDataGridColumn TItem="Product"
+                                  Property="Name"
+                                  Title="Details" />
+            @* Unit Price *@
+            <RadzenDataGridColumn TItem="Product"
+                                  Property="UnitPrice"
+                                  Title="Unit Price"
+                                  Width="110px"
+                                  TextAlign="TextAlign.Right">
+                <Template Context="row">
+                    @row.UnitPrice.ToString("C2")
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
     </RadzenDataGrid>
 
     @*Data Grid Fees ...................................*@
-    <div>Fees:</div>
-    <RadzenDataGrid @ref="gridfee"
-                    Data="@order.Fees"
+    <div><b>Fees:</b></div>
+    <RadzenDataGrid Data="@order?.Fees"
                     TItem="Fee"
                     AllowPaging="true"
                     PageSize="6"
                     AllowSorting="true"
                     class="aviva-grid">
+        <Columns>
+            @* Fee *@
+            <RadzenDataGridColumn TItem="Fee"
+                                  Property="Id"
+                                  Title="Fee"
+                                  Width="180px" />
 
-        @* Fee *@
-        <RadzenDataGridColumn TItem="Fee"
-                              Property="Id"
-                              Title="Product"
-                              Width="180px" />
-
-        @* Fees *@
-        <RadzenDataGridColumn TItem="Fee"
-                              Property="Name"
-                              Title="Details" />
-        @* Unit Price *@
-        <RadzenDataGridColumn TItem="Fee"
-                              Property="Amount"
-                              Title="Amount"
-                              Width="110px"
-                              TextAlign="TextAlign.Right">
-            <Template Context="row">
-                @row.Amount.ToString("C2")
-            </Template>
-        </RadzenDataGridColumn>
-
-       
+            @* Fees *@
+            <RadzenDataGridColumn TItem="Fee"
+                                  Property="Name"
+                                  Title="Details" />
+            @* Unit Price *@
+            <RadzenDataGridColumn TItem="Fee"
+                                  Property="Amount"
+                                  Title="Amount"
+                                  Width="110px"
+                                  TextAlign="TextAlign.Right">
+                <Template Context="row">
+                    @row.Amount.ToString("C2")
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
     </RadzenDataGrid>
-
-
-
 
     <div class="dialog-actions" style="margin-top:16px;display:flex;justify-content:flex-end">
         <RadzenButton Text="Close"
@@ -102,17 +110,3 @@
     </div>
 </div>
 
-@code {
-    [Parameter]
-    public Order order { get; set; } = new();
-    //[CascadingParameter]
-    //public DialogService ds { get; set; } = default!;
-
-    public RadzenDataGrid<Product> grid = default!;
-    public RadzenDataGrid<Fee> gridfee = default!;
-
-    private void Close()
-    {
-        dialogService.Close();
-    }
-}
