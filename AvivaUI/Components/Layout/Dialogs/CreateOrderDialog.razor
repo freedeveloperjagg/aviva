@@ -1,0 +1,74 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@inject DialogService dialogService
+
+<RadzenStack Orientation="Orientation.Horizontal" Gap="0" Style="width: 100%;">
+
+    @* LEFT: Productos table *@
+    <RadzenStack Style="flex: 1.4; padding-right: 1.5rem; border-right: 1px solid var(--rz-border-color);">
+        <RadzenText TextStyle="TextStyle.H6">Productos</RadzenText>
+        <RadzenDataGrid Data="@orderPago.Products" TItem="Product"
+                        AllowSorting="false" AllowPaging="false"
+                        ShowEmptyMessage="false" Style="width: 100%;">
+            <Columns>
+                <RadzenDataGridColumn TItem="Product"
+                                      Property="Name"
+                                      Title="Producto" />
+                <RadzenDataGridColumn TItem="Product"
+                                      Property="UnitPrice"
+                                      Title="Precio Unitario"
+                                      FormatString="{0:C2}"
+                                      TextAlign="TextAlign.Right" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+
+    @* RIGHT: Modo de pago *@
+    <RadzenStack Style="flex: 1; padding-left: 1.5rem;" Gap="1rem">
+        <RadzenText TextStyle="TextStyle.H6">Modo de Pago</RadzenText>
+        <RadzenRadioButtonList @bind-Value="@ModoPago"
+                               Orientation="Orientation.Vertical"
+                               TValue="string">
+            <Items>
+                <RadzenRadioButtonListItem Text="Pago en Efectivo" Value="@("efectivo")" />
+                <RadzenRadioButtonListItem Text="Pago con TDC" Value="@("tdc")" />
+                <RadzenRadioButtonListItem Text="Transferencia" Value="@("transferencia")" />
+            </Items>
+        </RadzenRadioButtonList>
+    </RadzenStack>
+
+</RadzenStack>
+
+@* Footer: Confirmar *@
+<RadzenStack Orientation="Orientation.Horizontal"
+             JustifyContent="JustifyContent.End"
+             Style="margin-top: 1.5rem;">
+    <RadzenButton Text="Confirmar"
+                  ButtonStyle="ButtonStyle.Primary"
+                  Click="@OnConfirmar" />
+</RadzenStack>
+
+@code {
+    [Parameter] 
+    public OrderPago orderPago { get; set; } = new();
+
+    [Parameter]
+    public string operation { get; set; } = "create";
+
+    private string ModoPago { get; set; } = "efectivo";
+
+    [CascadingParameter] 
+    public DialogService DialogService { get; set; } = default!;
+
+    private void OnConfirmar()
+    {
+        orderPago.Success = true;
+        dialogService.Close(orderPago);
+    }
+
+    public class ProductoItem
+    {
+        public string Nombre { get; set; } = string.Empty;
+        public decimal PrecioUnitario { get; set; }
+    }
+}

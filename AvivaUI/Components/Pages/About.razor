@@ -1,0 +1,251 @@
+﻿@page "/about"
+@using System.Reflection
+@using Microsoft.Extensions.Localization
+
+
+<PageTitle>About</PageTitle>
+<div >
+
+    <div class="about-panel">
+        <div style="background-image: url('/images/avalonthor.png');
+            background-repeat:no-repeat; background-size:cover;
+            background-position: center;
+                               
+            height:500px; border-radius:8px   ">
+            <RadzenRow Style="padding-top:30px; padding-left:30px">
+                <RadzenColumn Size="2" Style="min-width:110px">
+                    <RadzenImage Path="/images/avalon.png" Name="Avalon Development Inc." Style="max-width:100px;" />
+                </RadzenColumn>
+                <RadzenColumn Size="10">
+                    <p class="company-name">Ing. Jose Alfredo Garcia Guirado.</p>
+                    <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@($"Version {version}")" />
+                </RadzenColumn>
+            </RadzenRow>
+        </div>
+    </div>
+    <!-- Connectivity bar always visible at the bottom -->
+    <div >
+        <RadzenCard>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="12px">
+                <RadzenButton Text="Test Conectivity"
+                              Icon="network_check"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Click="@CheckOdooConectivityAsync" />
+                @if (!string.IsNullOrEmpty(connectivity))
+                {
+                    <RadzenText Style="padding-top:4px; font-size:13px;">@connectivity</RadzenText>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+
+</div>
+
+<style>
+    .about-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 60px);
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .about-panel {
+        width: 100%;
+        min-width: 320px;
+        background: var(--rz-panel-background-color, #fff);
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+        padding: 20px 20px 8px 20px;
+        flex-shrink: 0;
+    }
+
+    .about-title {
+        margin: 0 0 12px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--rz-text-color);
+    }
+
+    /* Home tab: image fills the full tab area */
+    tab-home {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        background-image: url('/images/avalonthor.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+    }
+
+    .home-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        border-radius: 8px;
+    }
+
+    /* Company & Disclaimer shared padding */
+    .tab-content {
+        padding: 12px 4px;
+        min-height: 480px;
+    }
+
+    .company-name {
+        font-weight: 600;
+        font-size: 2rem;
+        margin: 0 0 6px 0;
+        color: var(--rz-text-color);
+    }
+
+    .company-desc {
+        font-size: 1rem;
+        margin: 0 0 10px 0;
+        color: var(--rz-text-secondary-color);
+    }
+
+    /* Disclaimer scrollable if text is long */
+    .tab-disclaimer {
+        max-height: 260px;
+        overflow-y: auto;
+    }
+
+    /* Connectivity bar pinned to bottom */
+    .connectivity-bar {
+        margin-top: auto;
+        padding-top: 16px;
+    }
+
+    @@media (max-width: 768px) {
+        .about-panel {
+            width: 100%;
+            min-width: unset;
+        }
+    }
+</style>
+
+@code {
+    private string version = "1.0.0";
+    private string connectivity = string.Empty;
+    private int selectedTab = 0;
+
+    protected override void OnInitialized()
+    {
+        var ver = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
+        if (!string.IsNullOrEmpty(ver))
+        {
+            version = ver;
+        }
+    }
+
+    protected async Task CheckOdooConectivityAsync()
+    {
+        try
+        {
+            connectivity = "processing... wait";
+            // StateHasChanged();
+            // TestResult result = await service.TestConnectionWithOdoo();
+            // if (result != null)
+            // {
+            //     connectivity = $"Test Connectivity: sucessfull: Odoo Version: {result.ServerVersion} Serie: {result.ServerSerie} Protocol: {result.ProtocolCVersion}";
+            // }
+        }
+        catch (Exception ex)
+        {
+            connectivity = $"A exception happen: {ex.Message}";
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @page "/about"
+@using System.Reflection
+@using Microsoft.Extensions.Localization
+@using OdooGastos.Resources
+@using OdooProxy.Models.Odoo.Response
+@using OdooProxy.Services
+@inject IStringLocalizer<Apps> loc
+@inject GastosService service
+<PageTitle>@loc["MenuAbout"]</PageTitle>
+<NavMenu />
+
+<div style="background: url('images/avalonthor.png')no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    height: 70vh;">
+    <br />
+    <h4 style="padding-left:20px">@loc["MenuAbout"]</h4>
+    <RadzenRow Style="padding-left:20px">
+        <RadzenColumn Size="1" Style="min-width:130px">
+            <RadzenImage Path="/images/avalon.png" Name="Avalon Development Inc." />
+        </RadzenColumn>
+        <RadzenColumn Size="11">
+            <p>This application is developed by Avalon Software Inc.</p>
+            <p>Version: @version</p>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow Style="margin-top:180px; ">
+        <RadzenCard>
+            <RadzenText Style="font-size:10px; font-style:italic">
+                @loc["Disclaimer"]
+            </RadzenText>
+        </RadzenCard>
+    </RadzenRow>
+</div>
+<RadzenCard>
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenButton Text="Test Conectivity" Icon="network_check" Click="@CheckOdooConectivityAsync" />
+        <RadzenText Style="padding-top:6px">@connectivity</RadzenText>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+
+    private string version = "1.0.0";
+
+    private string connectivity = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        var ver = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
+        if (!string.IsNullOrEmpty(ver))
+        {
+            version = ver;
+        }
+    }
+
+    protected async Task CheckOdooConectivityAsync()
+    {
+        try
+        {
+            connectivity = "processing... wait";
+            TestResult result = await service.TestConnectionWithOdoo();
+            if (result != null)
+            {
+                connectivity = $"Test Connectivity: sucessfull: Odoo Version: {result.ServerVersion} Serie: {result.ServerSerie} Protocol: {result.ProtocolCVersion}";
+            }
+
+        }
+        catch (Exception ex)
+        {
+            connectivity = $"A exception happen: {ex.Message}";
+        }
+    }
+
+
+}
+ *@

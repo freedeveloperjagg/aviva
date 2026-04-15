@@ -1,0 +1,28 @@
+﻿/* Orders.razor.css */
+
+.dialog-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+    .dialog-table tr td:first-child {
+        color: #6b7280;
+        font-weight: 500;
+        padding: 8px 16px 8px 0;
+        width: 120px;
+        vertical-align: top;
+    }
+
+    .dialog-table tr td:last-child {
+        color: #111827;
+        padding: 8px 0;
+    }
+
+    .dialog-table tr {
+        border-bottom: 0.5px solid #f3f4f6;
+    }
+
+        .dialog-table tr:last-child {
+            border-bottom: none;
+        }

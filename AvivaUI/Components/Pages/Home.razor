@@ -1,0 +1,99 @@
+﻿@page "/"
+@using AvivaLibrary.Models
+@using Radzen
+@using Radzen.Blazor
+@inject NavigationManager NavManager
+@inject NotificationService notificationService
+@inject DialogService dialogService
+
+<div class="aviva-layout">
+
+    @* ── Main content ── *@
+    <div class="aviva-main">
+
+        <h2 class="page-title">Product Table</h2>
+
+        @* ── Data Grid ── *@
+        <RadzenDataGrid @ref="grid"
+                        Data="@products"
+                        TItem="Product"
+                        AllowPaging="true"
+                        PageSize="6"
+                        AllowSorting="true"
+                        SelectionMode="DataGridSelectionMode.Multiple"
+                        @bind-Value="selectedProducts"
+                        RowSelect="OnRowSelect"
+                        RowDeselect="OnRowDeselect"
+                        class="aviva-grid">
+
+            <Columns>
+
+                @* Checkbox column *@
+                <RadzenDataGridColumn TItem="Product"
+                                      Width="48px"
+                                      Sortable="false"
+                                      Filterable="false"
+                                      Title="">
+                    <HeaderTemplate>
+                        <RadzenCheckBox TriState="false"
+                                        TValue="bool"
+                                        Value="@(selectedProducts?.Count == products.Count)"
+                                        Change="@(v => SelectAll(v))" />
+                    </HeaderTemplate>
+                    <Template Context="row">
+                        <RadzenCheckBox TriState="false"
+                                        TValue="bool"
+                                        Value="@(selectedProducts != null && selectedProducts.Contains(row))"
+                                        Change="@(v => ToggleRow(row, v))" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+                @* Product *@
+                <RadzenDataGridColumn TItem="Product"
+                                      Property="Name"
+                                      Title="Product"
+                                      Width="180px" />
+
+                @* Details *@
+                <RadzenDataGridColumn TItem="Product"
+                                      Property="Details"
+                                      Title="Details" />
+
+                @* Status *@
+                <RadzenDataGridColumn TItem="Product"
+                                      Property="Status"
+                                      Title="Status"
+                                      Width="110px">
+                    <Template Context="row">
+                        <RadzenBadge Text="@row.Status"
+                                     BadgeStyle="@GetBadgeStyle(row.Status)"
+                                     Shade="Shade.Lighter" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+                @* Unit Price *@
+                <RadzenDataGridColumn TItem="Product"
+                                      Property="UnitPrice"
+                                      Title="Unit Price"
+                                      Width="110px"
+                                      TextAlign="TextAlign.Right">
+                    <Template Context="row">
+                        @row.UnitPrice.ToString("C2")
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+
+        @* ── Create Order button ── *@
+        <div class="aviva-actions">
+            <RadzenButton Text="Create Order"
+                          Icon="shopping_cart"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Disabled="@(!HasSelection)"
+                          Click="@CreateOrderAsync" />
+        </div>
+    </div>
+</div>
+
+

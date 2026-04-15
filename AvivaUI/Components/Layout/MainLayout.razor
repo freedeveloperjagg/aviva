@@ -1,0 +1,26 @@
+﻿@inherits LayoutComponentBase
+<RadzenDialog />
+<RadzenNotification />
+<div class="page">
+    <main>
+        <RadzenStack Orientation="Orientation.Vertical" Style="border:dashed,1px,red; max-width:98%; margin-left:20px;margin-right:10px">
+           <div style="flex: 1;">
+                <h2 style="font-style:normal; text-align:center; color:dodgerblue; padding-top: 10px;padding-left:5px; margin:0;">
+                    AVIVA TEST PROGRAM
+                </h2>
+            </div>             
+            <AvivaMenu/>
+            <article class="content px-4" style="border:dashed,1px,blue;">
+                @Body
+            </article>
+       
+        <AvivaFooter />
+        </RadzenStack>
+    </main>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>

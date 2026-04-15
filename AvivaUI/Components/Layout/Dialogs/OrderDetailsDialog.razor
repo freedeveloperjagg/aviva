@@ -1,0 +1,118 @@
+﻿@inject DialogService dialogService
+
+<div class="order-dialog">
+                
+    <table class="dialog-table">
+        <tr><td>Date</td>        <td>@order.CreatedDate.ToString("dd/MM/yyyy")</td></tr>
+        <tr><td>Name</td>       <td>@order.Name</td></tr>
+        <tr><td>Amount</td>      <td>@order.Amount.ToString("C2")</td></tr>
+        <tr><td>Qty</td>         <td>@order.ItemsCount</td></tr>
+        <tr>
+            <td>Paid</td>
+            <td>
+                <RadzenBadge Text="@(order.Paid ? "Yes" : "No")"
+                             BadgeStyle="@(order.Paid ? BadgeStyle.Success : BadgeStyle.Danger)"
+                             Shade="Shade.Lighter" />
+            </td>
+        </tr>
+    </table>
+    <div>Items</div>
+    @* ── Data Grid ── *@
+    <RadzenDataGrid @ref="grid"
+                    Data="@order.Products"
+                    TItem="Product"
+                    AllowPaging="true"
+                    PageSize="6"
+                    AllowSorting="true"
+                    class="aviva-grid">
+
+       
+
+        @* Checkbox column *@
+        <RadzenDataGridColumn TItem="Product"
+                              Width="48px"
+                              Sortable="false"
+                              Filterable="false"
+                              Title="">
+        </RadzenDataGridColumn>
+
+        @* Product *@
+        <RadzenDataGridColumn TItem="Product"
+                              Property="Name"
+                              Title="Product"
+                              Width="180px" />
+
+        @* Details *@
+        <RadzenDataGridColumn TItem="Product"
+                              Property="Details"
+                              Title="Details" />
+        @* Unit Price *@
+        <RadzenDataGridColumn TItem="Product"
+                              Property="UnitPrice"
+                              Title="Unit Price"
+                              Width="110px"
+                              TextAlign="TextAlign.Right">
+            <Template Context="row">
+                @row.UnitPrice.ToString("C2")
+            </Template>
+        </RadzenDataGridColumn>
+    </RadzenDataGrid>
+
+    @*Data Grid Fees ...................................*@
+    <div>Fees:</div>
+    <RadzenDataGrid @ref="gridfee"
+                    Data="@order.Fees"
+                    TItem="Fee"
+                    AllowPaging="true"
+                    PageSize="6"
+                    AllowSorting="true"
+                    class="aviva-grid">
+
+        @* Fee *@
+        <RadzenDataGridColumn TItem="Fee"
+                              Property="Id"
+                              Title="Product"
+                              Width="180px" />
+
+        @* Fees *@
+        <RadzenDataGridColumn TItem="Fee"
+                              Property="Name"
+                              Title="Details" />
+        @* Unit Price *@
+        <RadzenDataGridColumn TItem="Fee"
+                              Property="Amount"
+                              Title="Amount"
+                              Width="110px"
+                              TextAlign="TextAlign.Right">
+            <Template Context="row">
+                @row.Amount.ToString("C2")
+            </Template>
+        </RadzenDataGridColumn>
+
+       
+    </RadzenDataGrid>
+
+
+
+
+    <div class="dialog-actions" style="margin-top:16px;display:flex;justify-content:flex-end">
+        <RadzenButton Text="Close"
+                      ButtonStyle="ButtonStyle.Secondary"
+                      Click="@(() => Close())" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Order order { get; set; } = new();
+    //[CascadingParameter]
+    //public DialogService ds { get; set; } = default!;
+
+    public RadzenDataGrid<Product> grid = default!;
+    public RadzenDataGrid<Fee> gridfee = default!;
+
+    private void Close()
+    {
+        dialogService.Close();
+    }
+}

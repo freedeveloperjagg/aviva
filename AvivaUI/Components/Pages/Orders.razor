@@ -1,0 +1,137 @@
+﻿@page "/orders"
+@namespace AvivaUI.Components.Pages
+@using AvivaLibrary.Models
+@using Radzen
+@using Radzen.Blazor
+@inject NotificationService notificationService
+@inject DialogService dialogService
+
+<div class="aviva-layout">
+
+
+    @* ── Main content ── *@
+    <div class="aviva-main">
+
+        <h2 class="page-title">Orders</h2>
+
+        <RadzenDataGrid Data="@_orders"
+                        TItem="Order"
+                        AllowPaging="true"
+                        PageSize="6"
+                        AllowSorting="true"
+                        class="aviva-grid">
+            <Columns>
+
+                @* Order ID *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Property="OrderId"
+                                      Title="Order ID"
+                                      Width="100px" />
+
+                @* Date *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Property="Date"
+                                      Title="Date"
+                                      Width="120px"
+                                      FormatString="{0:dd/MM/yyyy}" />
+
+                @* Description *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Property="Name"
+                                      Title="Description" />
+
+                @* Amount *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Property="Amount"
+                                      Title="Amount"
+                                      Width="110px"
+                                      TextAlign="TextAlign.Right">
+                    <Template Context="row">
+                        @row.Amount.ToString("C2")
+                    </Template>
+                </RadzenDataGridColumn>
+
+                @* Product Quantities *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Property="ProductQuantities"
+                                      Title="Qty"
+                                      Width="70px"
+                                      TextAlign="TextAlign.Center" />
+
+                @* Paid *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Property="Paid"
+                                      Title="Paid"
+                                      Width="90px"
+                                      TextAlign="TextAlign.Center">
+                    <Template Context="row">
+                        <RadzenBadge Text="@(row.Paid ? "Yes" : "No")"
+                                     BadgeStyle="@(row.Paid ? BadgeStyle.Success : BadgeStyle.Danger)"
+                                     Shade="Shade.Lighter" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+                @* Show Details button *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Title="Details"
+                                      Width="110px"
+                                      Sortable="false"
+                                      Filterable="false"
+                                      TextAlign="TextAlign.Center">
+                    <Template Context="row">
+                        <RadzenButton Text="Details"
+                                      Icon="visibility"
+                                      ButtonStyle="ButtonStyle.Info"
+                                      Shade="Shade.Lighter"
+                                      Size="ButtonSize.Small"
+                                      Click="@(() => ShowDetails(row))" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+                @* Pay Order button *@
+                <RadzenDataGridColumn TItem="Order"
+                                      Title="Payment"
+                                      Width="110px"
+                                      Sortable="false"
+                                      Filterable="false"
+                                      TextAlign="TextAlign.Center">
+                    <Template Context="row">
+                        <RadzenButton Text="Pay"
+                                      Icon="payment"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      Shade="Shade.Lighter"
+                                      Size="ButtonSize.Small"
+                                      Disabled="@row.Paid"
+                                      Click="@(() => ConfirmPayment(row))" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+
+    </div>
+
+    @* ── Details dialog ── *@
+    @if (_showDetails && _selectedOrder != null)
+    {
+        <RadzenDialog>
+            <div class="order-dialog">
+                <h3>Order #@_selectedOrder.OrderId</h3>
+                <hr />
+                <table class="dialog-table">
+                    <tr><td>Date</td>        <td>@_selectedOrder.CreatedDate.ToString("dd/MM/yyyy")</td></tr>
+                    <tr><td>Description</td> <td>@_selectedOrder.Name</td></tr>
+                    <tr><td>Amount</td>      <td>@_selectedOrder.Amount.ToString("C2")</td></tr>
+                    <tr><td>Qty</td>         <td>@_selectedOrder.ItemsCount</td></tr>
+                    <tr><td>Paid</td>        <td>@(_selectedOrder.Paid ? "Yes" : "No")</td></tr>
+                </table>
+                <div class="dialog-actions">
+                    <RadzenButton Text="Close"
+                                  ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => _showDetails = false)" />
+                </div>
+            </div>
+        </RadzenDialog>
+    }
+
+</div>
