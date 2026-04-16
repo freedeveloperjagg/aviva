@@ -6,11 +6,11 @@ namespace AvivaApi.Bo
 {
     public interface IPaymentBo
     {
-        Task<OrderResponse?> CreatePaymentAsync(OrderPago order);
-        Task<OrderResponse?> GetOrderAsync(string id, string provider);
-        Task<List<OrderResponse>> GetOrdersAsync();
-        Task PayOrderAsync(ChangeOrderRequest request);
-        Task CancelOrderAsync(ChangeOrderRequest request);
+        Task<OrderCreated?> CreatePaymentAsync(OrderPago order);
+        Task<OrderCreated?> GetOrderByIdAsync(int id);
+        Task<List<OrderCreated>> GetOrdersAsync();
+        Task PayOrderAsync(int id);
+        Task CancelOrderAsync(int id);
        
     }
 }

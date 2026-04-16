@@ -1,15 +1,20 @@
 ﻿using AvivaLibrary.Models;
-using AvivaLibrary.Models.Requests;
-using AvivaLibrary.Models.Responses;
 
 namespace AvivaApi.Services
 {
     public interface IProviderService
     {
-        Task<List<OrderResponse>> GetOrdersAsync();
-        Task<OrderResponse?> GetOrderAsync(string id, string provider);
-        Task<OrderResponse?> CreateOrderAsync(EntidadDePago provider, OrderPago orderPago);
-        Task CancelOrderAsync(ChangeOrderRequest request);
-        Task PayOrderAsync(ChangeOrderRequest request);
+        Task<List<OrderCreated>> GetOrdersAsync();
+        Task<OrderCreated?> GetOrderByIdAsync(int id);
+        Task<OrderCreated?> CreateOrderAsync(string providerName, OrderPago orderPago);
+        
+        /// <summary>
+        /// Cancel the order using the internal Id
+        /// This cancel the order in the provider and internally.
+        /// </summary>
+        /// <param name="id">internal ID</param>
+        /// <returns>nothing</returns>
+        Task CancelOrderAsync(int id);
+        Task PayOrderAsync(int id);
     }
 }

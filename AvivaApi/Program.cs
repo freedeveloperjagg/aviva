@@ -2,6 +2,7 @@ using AvivaApi;
 using AvivaApi.Bo;
 using AvivaApi.Data;
 using AvivaApi.Facade;
+using AvivaApi.ProvidersRules;
 using AvivaApi.Proxy;
 using AvivaApi.Services;
 using Microsoft.Data.Sqlite;
@@ -58,12 +59,20 @@ builder.Services.AddDbContext<AvivaDbContext>(options =>
     options.UseSqlite(keepAliveConnection);
 });
 
+// Provider are added automatically to he selector collection!
+builder.Services.AddScoped<IProviderRules, ProviderPagaFacilRules>();
+builder.Services.AddScoped<IProviderRules, ProviderCazaPagosRules>();
+builder.Services.AddScoped<IProviderSelector,ProviderSelector>();
 
+builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<IProductsBo, ProductsBo>();
 builder.Services.AddScoped<IProductsFacade, ProductsFacade>();
+builder.Services.AddScoped<ICreateOrderFacade, CreateOrderFacade>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped<IPaymentProxy, PaymentProxy>();
+builder.Services.AddScoped<PagaFacilProxy>();
+builder.Services.AddScoped<CazaPagosProxy>();
+builder.Services.AddScoped<IProxyFactory, ProxyFactory>();
 builder.Services.AddScoped<IPaymentCompaniesFacade, PaymentCompaniesFacade>();
 builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IPaymentBo, PaymentBo>();

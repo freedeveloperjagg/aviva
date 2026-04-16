@@ -1,7 +1,6 @@
 ﻿using AvivaLibrary.Models;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using AvivaLibrary.Models.Responses;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 public class AvivaDbContext : DbContext
 {
@@ -12,6 +11,10 @@ public class AvivaDbContext : DbContext
     public DbSet<EntidadDePago> EntidadesDePago { get; set; }
     public DbSet<Rule> Rules { get; set; }
     public DbSet<Limit> Limites { get; set; }
+
+    public DbSet<OrderCreated> OrdersCreated { get; set;  }
+
+    public DbSet<Fee> Fees { get; set; }
 
     public AvivaDbContext(DbContextOptions<AvivaDbContext> options)
         : base(options)
@@ -36,8 +39,30 @@ public class AvivaDbContext : DbContext
                   .HasDefaultValue("Available");
 
             entity.Property(p => p.UnitPrice)
-                  .HasPrecision(18, 2);
+                  .HasPrecision(18, 2);            
         });
+
+        // ------- OrderCreated ---------------------------
+        modelBuilder.Entity<OrderCreated>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Amount).HasPrecision(18, 2);
+            entity.Property(e => e.ProviderOrderId).IsRequired();
+
+            // 1. One-to-Many with Fees (Fees ARE deleted with the Order)
+            entity.HasMany(e => e.Fees)
+                  .WithOne()
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            // 2. Many-to-Many with Products (Products ARE NOT deleted)
+            entity.HasMany(p => p.Products)
+                  .WithMany() // No navigation property back in Product class
+                  .UsingEntity<Dictionary<string, object>>(
+                      "OrderProductJoin", // Name of the Join Table in memory
+                      j => j.HasOne<Product>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                      j => j.HasOne<OrderCreated>().WithMany().OnDelete(DeleteBehavior.Cascade));
+        });
+
 
         // ── EntidadDePago ────────────────────────────────────────────
         modelBuilder.Entity<EntidadDePago>(entity =>
@@ -82,6 +107,20 @@ public class AvivaDbContext : DbContext
                   .HasConversion<string>()
                   .HasMaxLength(1);
         });
+
+        // ------- Fees ---------------------------
+        modelBuilder.Entity<Fee>(entity =>
+        {
+            entity.HasKey(f => f.Id);
+
+            entity.Property(f => f.Name)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(f => f.Amount)
+                  .HasPrecision(18, 2);
+        });
+
     }
 
     public void Seed()
