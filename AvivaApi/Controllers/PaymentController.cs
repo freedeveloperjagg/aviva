@@ -23,7 +23,7 @@ namespace AvivaApi.Controllers
         {
             try
             {
-                List<OrderResponse> response = await bo.GetOrdersAsync();
+                List<OrderCreated> response = await bo.GetOrdersAsync();
                 return Ok(response);
             }
             catch (Exception ex)
@@ -36,14 +36,13 @@ namespace AvivaApi.Controllers
         /// Get One Orders give nthe ID and the provider of pay name.
         /// </summary>
         /// <param name="id">Order ID</param>
-        /// <param name="provider">Provider Name</param>
         /// <returns>One OrderResponse</returns>
         [HttpGet("Order")]
-        public async Task<IActionResult> GetOrder([FromQuery]string id, [FromQuery] string provider)
+        public async Task<IActionResult> GetOrderAsync([FromQuery]int id)
         {
             try
             {
-                OrderResponse? response = await bo.GetOrderAsync(id,provider);
+                OrderCreated? response = await bo.GetOrderByIdAsync(id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -57,12 +56,12 @@ namespace AvivaApi.Controllers
         /// </summary>
         /// <param name="orderPago"></param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> PostOrder([FromBody] OrderPago orderPago)
+        [HttpPost("Create")]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderPago orderPago)
         {
             try
             {
-                OrderResponse? order = await bo.CreatePaymentAsync(orderPago);
+                OrderCreated? order = await bo.CreatePaymentAsync(orderPago);
                 return Ok(order);
             }
             catch (Exception ex)
@@ -74,16 +73,16 @@ namespace AvivaApi.Controllers
         /// <summary>
         /// Cancel the order by Id an provider Name
         /// </summary>
-        /// <param name="request">
+        /// <param name="id">
         /// Contain the Order Id and the Provider Name
         /// </param>
         /// <returns>Ok if ok Status 500 if error.</returns>
         [HttpPut("cancel")]
-        public async Task<IActionResult> CancelOrder([FromBody] ChangeOrderRequest request)
+        public async Task<IActionResult> CancelOrder([FromBody] int id)
         {
             try
             {
-                await bo.CancelOrderAsync(request);
+                await bo.CancelOrderAsync(id);
                 return Ok();
             }
             catch (Exception ex)
@@ -95,14 +94,14 @@ namespace AvivaApi.Controllers
         /// <summary>
         /// Pay the orders by ID
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="id"></param>
         /// <response>OK</response>
         [HttpPut("pay")]
-        public async Task<IActionResult> PayOrder([FromBody] ChangeOrderRequest request)
+        public async Task<IActionResult> PayOrder([FromBody] int id)
         {
             try
             {
-                await bo.PayOrderAsync(request);
+                await bo.PayOrderAsync(id);
                 return Ok();
             }
             catch (Exception ex)

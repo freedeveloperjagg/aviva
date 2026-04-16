@@ -1,4 +1,5 @@
-﻿using AvivaApi.Proxy;
+﻿using AvivaApi.Facade;
+using AvivaApi.Proxy;
 using AvivaLibrary.Models;
 using AvivaLibrary.Models.Requests;
 using AvivaLibrary.Models.Responses;
@@ -8,45 +9,79 @@ using System.Xml.XPath;
 namespace AvivaApi.Services
 {
     public class ProviderService(
-        IPaymentProxy xproxy,
+        IProxyFactory xproxy,
+        ICreateOrderFacade xfacade,
         CConfig xconfig) : IProviderService
     {
-        readonly IPaymentProxy proxy = xproxy;
+        readonly IProxyFactory factoryProxy = xproxy;
         readonly CConfig cconfig = xconfig;
+        readonly ICreateOrderFacade ofacade = xfacade;
 
-        public async Task<OrderResponse?> GetOrderAsync(string id, string provider)
+        /// <summary>
+        /// Get a Order Created usingthe internal ID
+        /// </summary>
+        /// <param name="id">Internal Order Id</param>
+        /// <returns></returns>
+        public async Task<OrderCreated?> GetOrderByIdAsync(int id)
         {
-            OrderResponse? order = await proxy.GetOrderAsync(id, provider);
-            return order;
+            // Get the provider name and Id from DB
+            OrderCreated? order = await ofacade.GetOrderById(id);
+            return order; 
         }        
 
-        public async Task<List<OrderResponse>> GetOrdersAsync()
+        public async Task<List<OrderCreated>> GetOrdersAsync()
         {
-            List<ProveedorSetting> proveedors = cconfig.ProveedoresSettings;
-            List<OrderResponse> orders = [];
-            foreach (ProveedorSetting prov in proveedors)
-            {
-                var ords = await proxy.GetOrdersAsync(prov);
-                orders.AddRange(ords);
-            }
-                       
-            return orders;
+            // Get Orders from the DB
+            List<OrderCreated> ords = await ofacade.GetAllOrders();
+            return ords;
         }
 
-        public async Task<OrderResponse?> CreateOrderAsync(EntidadDePago provider, OrderPago orderPago)
+        public async Task<OrderCreated?> CreateOrderAsync(string providerName, OrderPago orderPago)
         {
-            OrderResponse? response = await proxy.CreateOrderAsync(provider, orderPago);
+            // Get the proxy
+            var proxy = factoryProxy.GetProxy(providerName);
+            
+            // Create Order...
+            OrderCreated response = await proxy.CreateOrderAsync(orderPago);
+
+            // Store Order in DB
+            response.Id = await ofacade.InsertOrderCreatedInTable(response);
+
             return response;
         }
 
-        public async Task CancelOrderAsync(ChangeOrderRequest request)
+        /// <summary>
+        /// Cancel the order based in the Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
+        public async Task CancelOrderAsync(int id)
         {
-            await proxy.CancelOrderAsync(request);
+            // Get the Order in DB to Get the Provider name and Id provider
+            OrderCreated? dbresp = await ofacade.GetOrderById(id);
+            if (dbresp == null) throw new ApplicationException($"Id {id} not found on the Orders");
+            
+            // Get the proxy to be used
+            var proxy = factoryProxy.GetProxy(dbresp.ProviderName);
+            await proxy.CancelOrderAsync(dbresp.ProviderOrderId);
+
+            //Update the Orders in the DB
+            await ofacade.CancelOrder(id);
         }
 
-        public async Task PayOrderAsync(ChangeOrderRequest request)
+        public async Task PayOrderAsync(int id)
         {
-            await proxy.PayOrderAsync(request);
+            // Get the Order in DB to Get the Provider name and Id provider
+            OrderCreated? dbresp = await ofacade.GetOrderById(id);
+            if (dbresp == null) throw new ApplicationException($"Id {id} not found on the Orders");
+
+            // Get the proxy to be used
+            var proxy = factoryProxy.GetProxy(dbresp.ProviderName);
+            await proxy.PayOrderAsync(dbresp.ProviderOrderId);
+
+            //Update the Orders in the DB
+            await ofacade.PaidOrder(id);
         }
     }
 }

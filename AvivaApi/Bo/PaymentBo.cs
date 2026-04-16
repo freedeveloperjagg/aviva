@@ -1,18 +1,20 @@
 ﻿using AvivaApi.Facade;
+using AvivaApi.ProvidersRules;
 using AvivaApi.Services;
 using AvivaLibrary.Models;
 using AvivaLibrary.Models.Requests;
-using AvivaLibrary.Models.Responses;
 
 namespace AvivaApi.Bo
 {
     public class PaymentBo(
         IPaymentCompaniesFacade xfacade,
+        IProviderSelector xselector,
         IProviderService providerService
         ) : IPaymentBo
     {
         readonly IPaymentCompaniesFacade facade = xfacade;
         readonly IProviderService service = providerService;
+        readonly IProviderSelector selector = xselector;
 
  
         /// <summary>
@@ -24,39 +26,25 @@ namespace AvivaApi.Bo
         /// <param name="orderPago"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<OrderResponse?> CreatePaymentAsync(OrderPago orderPago)
+        public async Task<OrderCreated?> CreatePaymentAsync(OrderPago orderPago)
         {
             // We need to create the payment using the entity that cost less
 
             // First we need to calculate the total cost of the order
             decimal totalCost = orderPago.Products.Sum(p => p.UnitPrice);
 
-            // Get the list of comapanies that can make the payment
-            var providers = await facade.GetAllProvidersAsync();
-
-            decimal? value = decimal.MaxValue;
-            string providerName = string.Empty;
-            foreach (var prov in providers)
-            {
-                var charge = await facade.CalculateFeeAsync(prov.Nombre, orderPago.Method, totalCost);
-                if (charge < value)
-                {
-                    value = charge;
-                    providerName = prov.Nombre;
-                }
-            }
-
+            // Then we need to know who is the better provider for this order
+            string providerName = selector.GetBetterProvider(orderPago.Method, totalCost);
+                        
             // See if  provider was elected
             if (string.IsNullOrEmpty(providerName))
             {
                 throw new Exception("No provider was elected");
             }
 
-            // Select the provider and create the payment...
-            var provider = providers.Single(x => x.Nombre == providerName);
-
+           
             // Call the service to made the payment
-            OrderResponse? order = await service.CreateOrderAsync(provider, orderPago);
+            OrderCreated? order = await service.CreateOrderAsync(providerName, orderPago);
             return order;
         }
 
@@ -64,11 +52,10 @@ namespace AvivaApi.Bo
         /// Get a individual Order
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="provider"></param>
         /// <returns></returns>
-        public async Task<OrderResponse?> GetOrderAsync(string id, string provider)
+        public async Task<OrderCreated?> GetOrderByIdAsync(int id)
         {
-            OrderResponse? response = await service.GetOrderAsync(id, provider)   ;
+            OrderCreated? response = await service.GetOrderByIdAsync(id)   ;
             return response;
         }
 
@@ -76,32 +63,32 @@ namespace AvivaApi.Bo
         /// Get All Order s in all providers
         /// </summary>
         /// <returns></returns>
-        public async Task<List<OrderResponse>> GetOrdersAsync()
+        public async Task<List<OrderCreated>> GetOrdersAsync()
         {
-            List<OrderResponse> orders = await service.GetOrdersAsync();
+            List<OrderCreated> orders = await service.GetOrdersAsync();
             return orders;
         }
 
         /// <summary>
         /// Pay a order
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task PayOrderAsync(ChangeOrderRequest request)
+        public async Task PayOrderAsync(int id)
         {
-            await service.PayOrderAsync(request);
+            await service.PayOrderAsync(id);
         }
 
         /// <summary>
         /// Cancel Order
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task CancelOrderAsync(ChangeOrderRequest request)
+        public async Task CancelOrderAsync(int id)
         {
-            await service.CancelOrderAsync(request);
+            await service.CancelOrderAsync(id);
         }
     }
 }
