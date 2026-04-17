@@ -116,7 +116,7 @@ OUTADAPTER =="Aviva Response"==>CODERECEIVE["Caller"]
 - Create the provider module
 - Create a class with a Factory to move from aviva object to
 provider input
-- Create a class with a Factory to move from provider object to 
+- Create a class with a Factory to move from provider output to 
 aviva object
 - Create the class code for the particular provider
 - Create in settings the data for the provider. 
@@ -128,13 +128,13 @@ Example settings.json:
  "ProveedoresPago": [       
   {         
       "Nombre": "PAGAFACIL",    
-      "Url": "https://app-paga-chg-aviva.azurewebsites.net/",
-      "Key": "apikey-1cnmoisyhkif7s"
+      "Url": "https://xxxxxxxxxx.net/",
+      "Key": "apikey-xxxxxxxx"
     },
     {
       "Nombre": "CAZAPAGOS",
-      "Url": "https://app-caza-chg-aviva.azurewebsites.net/",
-      "Key": "apikey-1cnmoisyhkif7s"
+      "Url": "https://xxxxxxxxxxxxxx.net/",
+      "Key": "apikey-xxxxxxxxxx"
     }    
   ]
 ```
