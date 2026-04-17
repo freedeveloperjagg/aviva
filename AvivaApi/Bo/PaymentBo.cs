@@ -1,18 +1,16 @@
-﻿using AvivaApi.Facade;
-using AvivaApi.ProvidersRules;
+﻿using AvivaApi.ProvidersRules;
 using AvivaApi.Services;
 using AvivaLibrary.Models;
-using AvivaLibrary.Models.Requests;
 
 namespace AvivaApi.Bo
 {
     public class PaymentBo(
-        IPaymentCompaniesFacade xfacade,
+       // IPaymentCompaniesFacade xfacade,
         IProviderSelector xselector,
         IProviderService providerService
         ) : IPaymentBo
     {
-        readonly IPaymentCompaniesFacade facade = xfacade;
+        //readonly IPaymentCompaniesFacade facade = xfacade;
         readonly IProviderService service = providerService;
         readonly IProviderSelector selector = xselector;
 

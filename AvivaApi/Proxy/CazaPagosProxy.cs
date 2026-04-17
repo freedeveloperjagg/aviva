@@ -1,4 +1,5 @@
-﻿using AvivaApi.Proxy.Models;
+﻿using AvivaApi.Proxy.Models.Requests;
+using AvivaApi.Proxy.Models.Response;
 using AvivaLibrary.Models;
 using System.Text;
 using System.Text.Json;
@@ -21,13 +22,15 @@ namespace AvivaApi.Proxy
             PropertyNameCaseInsensitive = true,
         };
 
-        // All in upper cases
-        private const string ProviderName = "CAZAPAGOS";
+        public string ProviderName { get; } = "CAZAPAGOS";
 
         public async Task<OrderCreated> CreateOrderAsync(OrderPago orderPago)
         {
+            // Create the object specific for caza pago
+            var request = CazaPagosOrderPagoRequest.Factory(orderPago);
+            
             // Create the payload
-            string json = JsonSerializer.Serialize(orderPago);
+            string json = JsonSerializer.Serialize(request);
             HttpContent payload = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpClient client = factory.CreateClient("Provider");
@@ -39,7 +42,7 @@ namespace AvivaApi.Proxy
                 if (item.Nombre.Equals(ProviderName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     url = item.Url;
-                    payload.Headers.Add("x-api-key", item.Key);
+                    client.DefaultRequestHeaders.Add("x-api-key", item.Key);
                     break;
                 }
             }
@@ -51,10 +54,11 @@ namespace AvivaApi.Proxy
             string content = await result.Content.ReadAsStringAsync();
             if (result.IsSuccessStatusCode)
             {
-                Models.CazaPagosResponse? order = JsonSerializer.Deserialize<Models.CazaPagosResponse>(content, options);
-                if (order != null)
+                CazaPagosResponse? orderProvider = JsonSerializer.Deserialize<CazaPagosResponse>(content, options);
+                if (orderProvider != null)
                 {
-                    return order.ConvertPago(ProviderName);
+                    // Conver to aviva response ( OrderCreate object )
+                    return orderProvider.ConvertPago(ProviderName,orderPago);
                 }
 
                 throw new ApplicationException($"Order Created Returned null. something is very wrong in proxy in {ProviderName}:{url}.");
@@ -62,58 +66,11 @@ namespace AvivaApi.Proxy
             }
             throw new ApplicationException($"Error reading the proxy in {url}, Error: {content}");
         }
-
-        public async Task<OrderCreated?> GetOrderAsync(string orderProviderId)
-        {
-            var prov = cconfig.ProveedoresSettings.SingleOrDefault(x => x.Nombre.Equals(ProviderName, StringComparison.InvariantCultureIgnoreCase)) ?? throw new ArgumentException($"Provider Unknow when try to get order Id {orderProviderId}");
-            HttpClient client = factory.CreateClient("Provider");
-            client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
-            client.BaseAddress = new Uri(prov.Url);
-
-            var httpResponse = await client.GetAsync("Order/orderProviderId");
-            string content = await httpResponse.Content.ReadAsStringAsync();
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                CazaPagosResponse? order = JsonSerializer.Deserialize<CazaPagosResponse>(content, options);
-                if (order == null) return null;
-                OrderCreated ord = order.ConvertPago(ProviderName);
-                return ord;
-            }
-            throw new ApplicationException($"Access the Provider {prov.Nombre} fail with: {content}");
-        }
-
-        /// <summary>
-        /// NOTE: This method is not more used. the information is got from the DB
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<OrderCreated>> GetOrdersAsync()
-        {
-            var prov = cconfig.ProveedoresSettings.SingleOrDefault(x => x.Nombre.Equals(ProviderName, StringComparison.InvariantCultureIgnoreCase)) ?? throw new ArgumentException($"Provider Unknow when try to get orders");
-            HttpClient client = factory.CreateClient("Provider");
-            client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
-            client.BaseAddress = new Uri(prov.Url);
-
-            var httpResponse = await client.GetAsync("Order");
-            string content = await httpResponse.Content.ReadAsStringAsync();
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                List<CazaPagosResponse>? orders = JsonSerializer.Deserialize<List<CazaPagosResponse>>(content, options);
-                if (orders == null) return [];
-                List<OrderCreated> ord = [];
-                foreach (var orderItem in orders)
-                {
-                    ord.Add(orderItem.ConvertPago(ProviderName));
-                }
-                return ord;
-
-            }
-            throw new ApplicationException($"Access the Provider {prov.Nombre} fail with: {content}");
-        }
-
+            
         public async Task PayOrderAsync(string orderProviderId)
         {
             // Get the provider by Name
-            ProveedorSetting? prov = cconfig.ProveedoresSettings.FirstOrDefault(x => x.Nombre == ProviderName) ?? throw new ApplicationException($"Provider unknow for {orderProviderId} ");
+            var prov = cconfig.ProveedoresSettings.First(x => x.Nombre.ToUpperInvariant() == ProviderName);
             HttpClient client = factory.CreateClient("Provider");
             client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
             client.BaseAddress = new Uri(prov.Url);
@@ -132,11 +89,11 @@ namespace AvivaApi.Proxy
         public async Task CancelOrderAsync(string orderProviderId)
         {
             // Get the provider by Name
-            ProveedorSetting? prov = cconfig.ProveedoresSettings.FirstOrDefault(x => x.Nombre == ProviderName) ?? throw new ApplicationException($"Provider unknow for {orderProviderId} ");
+            var prov = cconfig.ProveedoresSettings.First(x => x.Nombre.ToUpperInvariant() == ProviderName);
             HttpClient client = factory.CreateClient("Provider");
             client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
             client.BaseAddress = new Uri(prov.Url);
-
+            
             HttpResponseMessage httpResponse = await client.PutAsync($"cancellation?id={orderProviderId}", null);
             string content = await httpResponse.Content.ReadAsStringAsync();
             if (httpResponse.IsSuccessStatusCode)
@@ -148,5 +105,4 @@ namespace AvivaApi.Proxy
 
         }
     }
-
 }

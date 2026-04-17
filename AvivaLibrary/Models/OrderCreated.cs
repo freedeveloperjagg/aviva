@@ -28,7 +28,7 @@ namespace AvivaLibrary.Models
         public decimal Amount { get; set; }
         
         /// <summary>
-        /// Method of payment can be cash, CC Trans etc.
+        /// Method of payment can be CASH / CREDIT / TRANSFER.
         /// </summary>
         public string Method { get; set; } = string.Empty;
         

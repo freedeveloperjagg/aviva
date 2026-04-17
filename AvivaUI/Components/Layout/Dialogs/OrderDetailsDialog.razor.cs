@@ -29,7 +29,7 @@ namespace AvivaUI.Components.Layout.Dialogs
 
         private bool IsPaid(string status)
         {
-            return status.ToLowerInvariant() == "paid";
+            return status.ToUpperInvariant() == "PAID";
         }
     }
 }

@@ -5,7 +5,13 @@ namespace AvivaUI.Services
 {
     public class ProductServices(IProductsProxy productsProxy) : IProductServices
     {
-        IProductsProxy proxy = productsProxy;
+        readonly IProductsProxy proxy = productsProxy;
+
+        public async Task<string> CheckConnectionAliveAsync()
+        {
+            string connection = await proxy.CheckConnectionAliveAsync();
+            return connection;
+        }
 
         public async Task<List<Product>> GetAllProductsAsync()
         {

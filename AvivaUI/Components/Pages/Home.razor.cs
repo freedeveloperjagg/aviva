@@ -12,9 +12,9 @@ namespace AvivaUI.Components.Pages
     {
         readonly IProductServices pservices = productService;
         readonly IOrderPagoServices pagoService = xpagoService;
-        public List<Product> products = new();
+        public List<Product> products = [];
         public RadzenDataGrid<Product> grid = default!;
-        private IList<Product>? selectedProducts = new List<Product>();
+        private IList<Product>? selectedProducts = [];
 
         private bool HasSelection => selectedProducts?.Count > 0;
 
@@ -50,7 +50,7 @@ namespace AvivaUI.Components.Pages
 
         private void ToggleRow(Product row, bool selected)
         {
-            selectedProducts ??= new List<Product>();
+            selectedProducts ??= [];
             if (selected) { if (!selectedProducts.Contains(row)) selectedProducts.Add(row); }
             else { selectedProducts.Remove(row); }
             StateHasChanged();
@@ -58,7 +58,17 @@ namespace AvivaUI.Components.Pages
 
         private void SelectAll(bool selectAll)
         {
-            selectedProducts = selectAll ? new List<Product>(products) : new List<Product>();
+            selectedProducts = [];
+            if (selectAll)
+            {
+                foreach (var p in products)
+                {
+                    if (p.Status.ToUpperInvariant() == "AVAILABLE")
+                    {
+                        selectedProducts.Add(p);
+                    }
+                }
+            }
             StateHasChanged();
         }
 
@@ -71,7 +81,7 @@ namespace AvivaUI.Components.Pages
                 // Prepare the dialog to be open in mode Creation
                 OrderPago order = new()
                 {
-                    Products = selectedProducts.ToList()
+                    Products = [.. selectedProducts]
                 };
 
                 var parameters = new Dictionary<string, object?>
@@ -107,8 +117,8 @@ namespace AvivaUI.Components.Pages
                             Severity = NotificationSeverity.Success,
                             CloseOnClick = true,
                             Summary = "Order Created",
-                            Detail = $"Order {resu.OrderId} to be pay in {resu.Method}, Amount {resu.Amount} created successfully.",
-                            Duration = 5000
+                            Detail = $"Order {resu.Id} to be pay using: {resu.Method}, Amount {resu.Amount:C} created successfully.",
+                            Duration = 115000
                         });
                     }
                     else
@@ -135,26 +145,12 @@ namespace AvivaUI.Components.Pages
                     Detail = ex.Message,
                     Duration = 5000
                 });
-            }
+            }        
+        }
 
-
-
-
-
-
-
-
-
-            //// TODO: Navigate to order creation page passing selected IDs
-            //NavManager.NavigateTo($"/createorder?ids={string.Join(",", selectedProducts.Select(p => p.Id))}");
-
-            //NotificationService.Notify(new NotificationMessage
-            //{
-            //    Severity = NotificationSeverity.Success,
-            //    Summary = "Order initiated",
-            //    Detail = $"{selectedProducts.Count} product(s) added to order.",
-            //    Duration = 3000
-            //});
+        private bool IsProductAvailable(Product product)
+        {
+            return product.Status.ToUpperInvariant() == "AVAILABLE";
         }
 
         private static BadgeStyle GetBadgeStyle(string status) => status switch

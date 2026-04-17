@@ -1,21 +1,14 @@
-﻿using AvivaLibrary.Models;
-using AvivaLibrary.Models.Responses;
+﻿using AvivaLibrary.Models.Responses;
 using AvivaUI.Components.Layout.Dialogs;
 using AvivaUI.Services;
-using Microsoft.AspNetCore.Components;
 using Radzen;
-using Radzen.Blazor;
 
 namespace AvivaUI.Components.Pages;
 
 public partial class Orders(IOrderPagoServices xpagoService)
 {
-    //[Inject] private NotificationService NotificationService { get; set; } = default!;
-    //[Inject] private DialogService DialogService { get; set; } = default!;
-
-    private List<OrderResponse> orders = new();
+    private List<OrderResponse> orders = [];
     private OrderResponse? selectedOrder;
-    //private bool _showDetails;
     readonly IOrderPagoServices pagoServices = xpagoService;
 
     protected override async Task OnInitializedAsync()
@@ -35,8 +28,8 @@ public partial class Orders(IOrderPagoServices xpagoService)
                 Detail = $"Something happen: {ex.Message}.",
                 Duration = 10000
             });
-        }     
- 
+        }
+
     }
 
     // ── Show Details dialog ──────────────────────────────────────────────────
@@ -44,7 +37,7 @@ public partial class Orders(IOrderPagoServices xpagoService)
     {
         selectedOrder = order;
 
-        await dialogService.OpenAsync<OrderDetailsDialog>($"Order #{order.OrderId}",
+        await dialogService.OpenAsync<OrderDetailsDialog>($"Order #{order.Id}",
                 new Dictionary<string, object?> { { "order", order } },
                 new DialogOptions
                 {
@@ -52,43 +45,123 @@ public partial class Orders(IOrderPagoServices xpagoService)
                     CloseDialogOnEsc = true,
                     ShowClose = true,
                     Resizable = true,
-                    
+
                 });
     }
 
     // ── Confirm Payment dialog ───────────────────────────────────────────────
     private async Task ConfirmPayment(OrderResponse order)
     {
-        if (order.Status == "Paid") return;
-
-        bool? confirmed = await dialogService.Confirm(
-            $"Mark Order #{order.OrderId} — {order.ProviderName} — as paid?",
-            "Confirm Payment",
-            new ConfirmOptions
-            {
-                OkButtonText = "Yes, pay now",
-                CancelButtonText = "Cancel"
-            });
-
-        if (confirmed == true)
+        try
         {
-            order.Status = "Paid";
 
+            if (order.Status == "Paid") return;
+
+            bool? confirmed = await dialogService.Confirm(
+                $"Mark Order #{order.Id} — {order.ProviderName} — as paid?",
+                "Confirm Payment",
+                new ConfirmOptions
+                {
+                    OkButtonText = "Yes, pay now",
+                    CancelButtonText = "Cancel"
+                });
+
+            if (confirmed == true)
+            {
+                // Add here the payment call to API
+                await pagoServices.PaidOrder(order.Id);
+
+                // Refresh the orders
+
+
+                order.Status = "Paid";
+
+                notificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Payment recorded",
+                    Detail = $"Order #{order.Id} has been marked as paid.",
+                    Duration = 3000
+                });
+
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
             notificationService.Notify(new NotificationMessage
             {
-                Severity = NotificationSeverity.Success,
-                Summary = "Payment recorded",
-                Detail = $"Order #{order.OrderId} has been marked as paid.",
-                Duration = 3000
+                Severity = NotificationSeverity.Error,
+                Summary = "Paid Unsuccesful",
+                Detail = $"Order #{order.Id} was not paid: {ex.Message}",
+                Duration = 113000
             });
-
-            StateHasChanged();
         }
     }
 
-    private bool CheckIsPaid(string status)
+    private async Task CancelPayment(OrderResponse order)
     {
-        return status.ToLowerInvariant() == "paid";
+        try
+        {
 
+            if (order.Status == "CANCELLED") return;
+
+            bool? confirmed = await dialogService.Confirm(
+                $"Mark Order #{order.Id} — {order.ProviderName} — as Cancelled?",
+                "Confirm Cancellation",
+                new ConfirmOptions
+                {
+                    OkButtonText = "Yes, Cancel now",
+                    CancelButtonText = "Cancel"
+                });
+
+            if (confirmed == true)
+            {
+                // Call cancellation Service.................
+                await pagoServices.CancelOrder(order.Id);
+
+                // This allow to a response is screen directly.
+                order.Status = "CANCELLED";
+
+                notificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Cancellation success",
+                    Detail = $"Order #{order.Id} has been marked as cancelled.",
+                    Duration = 3000
+                });
+
+                StateHasChanged();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            notificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Cancellation Fail",
+                Detail = $"Order #{order.Id} was not marked as cancelled: {ex.Message}",
+                Duration = 53000
+            });
+        }
     }
+
+    /// <summary>
+    /// Check if it is pay or it is cancelled.
+    /// </summary>
+    /// <param name="status"></param>
+    /// <returns></returns>
+    private static bool CheckIsPaidorCancelled(string status)
+    {
+        bool active = status.Equals("PAID", StringComparison.InvariantCultureIgnoreCase)
+            || status.Equals("CANCELLED", StringComparison.InvariantCultureIgnoreCase);
+        return active;
+    }
+       
+
+    //private static bool CheckIsCancelled(string status)
+    //{
+    //    return status.Equals("CANCELLED", StringComparison.CurrentCultureIgnoreCase);
+    //}
 }

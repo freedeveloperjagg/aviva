@@ -25,13 +25,13 @@
 
                 @* Order ID *@
                 <RadzenDataGridColumn TItem="OrderResponse"
-                                      Property="OrderId"
+                                      Property="Id"
                                       Title="Order ID"
-                                      Width="150px" />
+                                      Width="90px" />
 
                 @* Date *@
                 <RadzenDataGridColumn TItem="OrderResponse"
-                                      Property="CreatedDate"
+                                      Property="DateCreated"
                                       Title="Date"
                                       Width="110px"
                                       FormatString="{0:dd/MM/yyyy}" />
@@ -57,27 +57,14 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                @* Product Quantities 
+                 Product Quantities 
                 <RadzenDataGridColumn TItem="OrderResponse"
-                                      Property="products.ProductQuantities"
-                                      Title="Qty"
+                                      Property="ProviderName"
+                                      Title="Provider"
                                       Width="70px"
                                       TextAlign="TextAlign.Center" />
-*@
-                @* Paid 
-                <RadzenDataGridColumn TItem="Order"
-                                      Property="Paid"
-                                      Title="Paid"
-                                      Width="90px"
-                                      TextAlign="TextAlign.Center">
-                    <Template Context="row">
-                        <RadzenBadge Text="@(row.Paid ? "Yes" : "No")"
-                                     BadgeStyle="@(row.Paid ? BadgeStyle.Success : BadgeStyle.Danger)"
-                                     Shade="Shade.Lighter" />
-                    </Template>
-                </RadzenDataGridColumn>
+   
 
-*@
                 @* Show Details button *@
                 <RadzenDataGridColumn TItem="OrderResponse"
                                       Title="Details"
@@ -109,10 +96,30 @@
                                       ButtonStyle="ButtonStyle.Success"
                                       Shade="Shade.Lighter"
                                       Size="ButtonSize.Small"
-                                      Disabled="@CheckIsPaid(row.Status)"
+                                      Disabled="@CheckIsPaidorCancelled(row.Status)"
                                       Click="@(() => ConfirmPayment(row))" />
                     </Template>
                 </RadzenDataGridColumn>
+                @* Cancel Order button *@
+                <RadzenDataGridColumn TItem="OrderResponse"
+                                      Title="Cancel"
+                                      Width="110px"
+                                      Sortable="false"
+                                      Filterable="false"
+                                      TextAlign="TextAlign.Center">
+                    <Template Context="row">
+                        <RadzenButton Text="Cancel"
+                                      Icon="cancel"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Shade="Shade.Lighter"
+                                      Size="ButtonSize.Small"
+                                      Disabled="@CheckIsPaidorCancelled(row.Status)"
+                                      Click="@(() => CancelPayment(row))" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+
+
 
             </Columns>
         </RadzenDataGrid>

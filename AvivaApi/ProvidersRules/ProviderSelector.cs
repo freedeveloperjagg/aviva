@@ -6,13 +6,13 @@
     /// The update of the different provider is automatic done when you declare in program
     /// the class with the special rules in program and create the specific class.
     /// </summary>
-    public class ProviderSelector : IProviderSelector
+    /// <remarks>
+    /// To this work the provider Rules must be entered as enumerable
+    /// </remarks>
+    /// <param name="xproviders"></param>
+    public class ProviderSelector(IEnumerable<IProviderRules> xproviders) : IProviderSelector
     {
-        private readonly List<IProviderRules> providers;
-        public ProviderSelector(List<IProviderRules> xproviders)
-        {
-            providers = xproviders;
-        }
+        private readonly List<IProviderRules> providers = [.. xproviders];
 
         /// <summary>
         /// Use this to calculate your fees
