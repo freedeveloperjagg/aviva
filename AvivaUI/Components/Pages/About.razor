@@ -127,39 +127,6 @@
     }
 </style>
 
-@code {
-    private string version = "1.0.0";
-    private string connectivity = string.Empty;
-    //private int selectedTab = 0;
-
-    protected override void OnInitialized()
-    {
-        var ver = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
-        if (!string.IsNullOrEmpty(ver))
-        {
-            version = ver;
-        }
-    }
-
-    protected async Task CheckOdooConectivityAsync()
-    {
-        try
-        {
-            connectivity = "processing... wait";
-            // StateHasChanged();
-            // TestResult result = await service.TestConnectionWithOdoo();
-            // if (result != null)
-            // {
-            //     connectivity = $"Test Connectivity: sucessfull: Odoo Version: {result.ServerVersion} Serie: {result.ServerSerie} Protocol: {result.ProtocolCVersion}";
-            // }
-        }
-        catch (Exception ex)
-        {
-            connectivity = $"A exception happen: {ex.Message}";
-        }
-    }
-}
-
 
 
 

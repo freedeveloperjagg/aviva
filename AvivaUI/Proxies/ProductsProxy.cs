@@ -6,6 +6,24 @@ namespace AvivaUI.Proxies
     {
         private readonly IHttpClientFactory httpClientFactory = factory;
 
+        public async Task<string> CheckConnectionAliveAsync()
+        {
+            var client = httpClientFactory.CreateClient("AvivaApi");
+
+            var response = await client.GetAsync("/api/products/Alive");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var alive = await response.Content.ReadAsStringAsync();
+                return alive;
+            }
+            else
+            {
+                // Handle error response as needed
+                throw new Exception($"Failed to Connect with API: {response.ReasonPhrase}");
+            }
+        }
+
         /// <summary>
         /// Get Products from API
         /// </summary>
@@ -20,7 +38,7 @@ namespace AvivaUI.Proxies
             if (response.IsSuccessStatusCode)
             {
                 var products = await response.Content.ReadFromJsonAsync<List<Product>>();
-                return products ?? new List<Product>();
+                return products ?? [];
             }
             else
             {
