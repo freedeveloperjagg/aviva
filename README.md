@@ -24,6 +24,36 @@ participant PR as Proxy
     SE -->> BO: All Done  
     BO -->> C: OK
 ```
+## Constants relatives to Order
+
+### METHOD
+
+|Aviva|PagaFacil|CazaPagos|
+|--|--|--|
+|x|None|None|
+|CASH|Cash|x|
+|CREDIT|Card|CreditCard|
+|TRANSFER|x|Transfer|
+
+### ProviderName
+
+|Provider|AvivaName|
+|--|--|
+|Paga Facil|PAGAFACIL|
+|Caza Pagos|CAZAPAGOS|
+
+### Status
+
+|Aviva|PagaFacil|CazaPagos|
+|--|--|--|
+|NONE|None|None|
+|PENDING|Pending|Pending|
+|CANCELLED|Cancelled|Pending|
+|PAID|Paid|Cancelled|
+
+
+
+
 ## Manage Get All Orders
 
 ```mermaid

@@ -43,6 +43,8 @@
                     <Template Context="row">
                         <RadzenCheckBox TriState="false"
                                         TValue="bool"
+                                        Visible="@IsProductAvailable(row)" 
+                                       
                                         Value="@(selectedProducts != null && selectedProducts.Contains(row))"
                                         Change="@(v => ToggleRow(row, v))" />
                     </Template>

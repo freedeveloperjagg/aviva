@@ -78,7 +78,7 @@ namespace AvivaApi.Controllers
         /// </param>
         /// <returns>Ok if ok Status 500 if error.</returns>
         [HttpPut("cancel")]
-        public async Task<IActionResult> CancelOrder([FromBody] int id)
+        public async Task<IActionResult> CancelOrder([FromQuery] int id)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace AvivaApi.Controllers
         /// <param name="id"></param>
         /// <response>OK</response>
         [HttpPut("pay")]
-        public async Task<IActionResult> PayOrder([FromBody] int id)
+        public async Task<IActionResult> PayOrder([FromQuery] int id)
         {
             try
             {

@@ -11,6 +11,20 @@ namespace AvivaApi.Controllers
     {
         private readonly IProductsBo bo = xbo;
 
+        /// <summary>
+        /// Check that the API is accessible.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Alive")]
+        public IActionResult GetAlive() 
+        {
+            return Ok("I am Alive...");
+        }        
+        
+        /// <summary>
+        /// Get the list of all products in the DB
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProductsAsync()
         {

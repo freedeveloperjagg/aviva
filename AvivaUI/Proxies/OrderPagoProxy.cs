@@ -17,11 +17,32 @@ namespace AvivaUI.Proxies
         };
 
         /// <summary>
+        /// Mark as cancel a order.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
+        public async Task CancelOrder(int id)
+        {
+            var client = factory.CreateClient();
+            client.BaseAddress = new Uri(cconfig.ApiAddress);
+
+            var result = await client.PutAsync($"api/Payment/cancel?id={id}", null);
+            string content = await result.Content.ReadAsStringAsync();
+            if (result.IsSuccessStatusCode)
+            {
+                return;
+            }
+
+            throw new ApplicationException($"Error reading the proxy in {client.BaseAddress}, Error: {content}");
+        }
+
+        /// <summary>
         /// Get All payment orders from providers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
-        public async Task<List<OrderResponse>> GetAllOrdersFromProviders()
+        public async Task<List<OrderResponse>> GetAllOrdersCreated()
         {
             var client = factory.CreateClient();
             client.BaseAddress = new Uri(cconfig.ApiAddress);
@@ -38,6 +59,20 @@ namespace AvivaUI.Proxies
             throw new ApplicationException($"Get All PAyment Oders, Error reading the proxy in {client.BaseAddress}, Error: {content}");
         }
 
+        public async Task PaidOrder(int id)
+        {
+            var client = factory.CreateClient();
+            client.BaseAddress = new Uri(cconfig.ApiAddress);
+
+            var result = await client.PutAsync($"api/Payment/pay?id={id}", null);
+            string content = await result.Content.ReadAsStringAsync();
+            if (result.IsSuccessStatusCode)
+            {
+                return;
+            }
+            throw new ApplicationException($"Error reading the proxy in {client.BaseAddress}, Error: {content}");
+        }
+
         public async Task<OrderResponse?> SendOrderPago(OrderPago pago)
         {
             string json = JsonSerializer.Serialize(pago);
@@ -46,7 +81,7 @@ namespace AvivaUI.Proxies
             var client = factory.CreateClient();
             client.BaseAddress = new Uri(cconfig.ApiAddress);
 
-            var result = await client.PostAsync("api/Payment", payload);
+            var result = await client.PostAsync("api/Payment/Create", payload);
             string content = await result.Content.ReadAsStringAsync();
             if (result.IsSuccessStatusCode)
             {
