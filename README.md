@@ -1,6 +1,66 @@
-# aviva Test
+# Aviva Test
 
-## Manage Create a Order
+## Solution Projects
+
+|Project|Note|
+|--|--|
+|AvivaUI|Graphic Interface in BLAZOR C# .NET 10|
+|AvivaAPI|REST API in C# .NET 10|
+|AvivaLibrary|Common class between UI and API|
+|TestAvivaAPI|XUnit test for API|
+
+## General Application Diagram
+```mermaid
+flowchart LR
+
+ subgraph Aviva
+ UI["Aviva UI"] ==> API["Aviva API"]
+ API["Aviva API"] .- LIB["Aviva Library"]
+ UI["Aviva UI"] .- LIB["Aviva Library"]
+ TEST["TEST Aviva API (Xunit)"] .-> API
+ API["Aviva API"] ==> DB@{ shape: cyl,label: "Aviva DB(Products, Orders)"}
+ end
+ subgraph External Resources 
+ API["Aviva API"] ==> C@{ shape: docs, label: "Payment Providers (CazaPagos, PagaFacil)"}
+
+ end
+ 
+```
+
+ ## Constants and definitions used in the program
+
+ We should standardize the names in the program, 
+ because they are strings and easy to mistakes.
+
+ ### PAYMENT METHOD
+
+|Aviva|PagaFacil|CazaPagos|
+|--|--|--|
+|x|None|None|
+|CASH|Cash|x|
+|CREDIT|Card|CreditCard|
+|TRANSFER|x|Transfer|
+
+### PROVIDER NAME
+
+|Provider|AvivaName|
+|--|--|
+|Paga Facil|PAGAFACIL|
+|Caza Pagos|CAZAPAGOS|
+
+### ORDER STATUS
+
+|Aviva|PagaFacil|CazaPagos|
+|--|--|--|
+|NONE|None|None|
+|PENDING|Pending|Pending|
+|CANCELLED|Cancelled|Cancelled|
+|PAID|Paid|Paid|
+
+
+
+## Manage Create a Order.....................
+
 ```mermaid
 sequenceDiagram
 participant C as PaymentController
@@ -24,56 +84,116 @@ participant PR as Proxy
     SE -->> BO: All Done  
     BO -->> C: OK
 ```
-## Constants relatives to Order
+### Provider Client Module (proxy) Instantiation
 
-### METHOD
+The program uses a Proxy Factory (or client factory) to instantiate the
+desired client in the program. The client is created based in the Provider
+Name.
 
-|Aviva|PagaFacil|CazaPagos|
-|--|--|--|
-|x|None|None|
-|CASH|Cash|x|
-|CREDIT|Card|CreditCard|
-|TRANSFER|x|Transfer|
+```mermaid
+flowchart LR
+CODE["Caller"] =="Provider Name"==> FACTORY["Object Factory"]
+FACTORY["Proxy Factory"] ==> INSTANCE["Specific Proxy Object"]
 
-### ProviderName
+```
 
-|Provider|AvivaName|
-|--|--|
-|Paga Facil|PAGAFACIL|
-|Caza Pagos|CAZAPAGOS|
+### Provider Client Module Structure.
 
-### Status
+```mermaid
+flowchart LR
+CODE["Caller"] =="Aviva Order"==> INADAPTER["Create Specific Provider Input Order object"]
+subgraph "Provider Custom Module"
+INADAPTER =="Provider Input"==> INSTANCE["Connection Logic with the Provider"]
+INSTANCE =="Provider Output"==> OUTADAPTER["Return Aviva Output Order"]
+end
+AVIVASETTING["Program General Settings"] <-.- INSTANCE
+OUTADAPTER =="Aviva Response"==>CODERECEIVE["Caller"]
 
-|Aviva|PagaFacil|CazaPagos|
-|--|--|--|
-|NONE|None|None|
-|PENDING|Pending|Pending|
-|CANCELLED|Cancelled|Pending|
-|PAID|Paid|Cancelled|
+```
 
+#### Integrate a new provider client (proxy)
+
+- Create the provider module
+- Create a class with a Factory to move from aviva object to
+provider input
+- Create a class with a Factory to move from provider object to 
+aviva object
+- Create the class code for the particular provider
+- Create in settings the data for the provider. 
+- Register the new service in the `Programs.cs`
+
+Example settings.json:
+```json
+
+ "ProveedoresPago": [       
+  {         
+      "Nombre": "PAGAFACIL",    
+      "Url": "https://app-paga-chg-aviva.azurewebsites.net/",
+      "Key": "apikey-1cnmoisyhkif7s"
+    },
+    {
+      "Nombre": "CAZAPAGOS",
+      "Url": "https://app-caza-chg-aviva.azurewebsites.net/",
+      "Key": "apikey-1cnmoisyhkif7s"
+    }    
+  ]
+```
+NOTE: By limitation of the test environment, we put the key here,
+but in real live must be in a secret local, and encrypted or in a 
+vault in production!
+
+### Provider Rules Selection Process
+
+The selection of the provider is based in rules. The winner provider will 
+be the provider that is less expensive in the fees and taxes.
+In the program fees and taxes are consider together.
+The Provider Selector test all the rules per register provider and 
+return the name of the Provider that charge less for the specific operation.
+
+#### To enter a new provider Selector:
+- Create the module with the rules based in `IProviderRules`
+- Declare the module in Program as service to be injected
+- The Provider selector automatically get the new module to use it.
+
+
+```mermaid
+flowchart LR
+CODE["Aviva Caller"] =="Payment Method and Amount"==> PS["Provider Selector"]
+subgraph "Provider Selector"
+PS <--"Check All"--> RM@{ shape:docs, label: "Fees Rule (CazaPagos, PagaFacil)"}
+end
+PS =="Provider Name Selected"==> CODE
+
+
+```
 
 
 
 ## Manage Get All Orders
 
+The program goes to the stored tables to get the orders.
+
 ```mermaid
 sequenceDiagram
-participant C as PaymentController
-participant BO as Payment BO
-participant SE as Service Provider
-participant FA as CreateOrderFacade
-participant DA as Data
-
-    C->>  BO: Get All Orders
-    BO ->> SE: Get All Orders
-    SE ->> FA: Get All Orders
-    FA ->> DA: Get All Orders
-    DA -->> FA: Orders
-    FA -->> SE: Orders 
-    SE -->> BO: Orders  
-    BO -->> C: OK(Orders)
+    participant C as PaymentController
+    participant BO as Payment BO
+    participant SE as Service Provider
+    participant FA as CreateOrderFacade
+    participant DA as (Database)
+    C->>BO: Get All Orders
+    BO->>SE: Get All Orders
+    SE->>FA: Get All Orders
+    FA->>DA: Get All Orders
+    DA-->>FA: Orders
+    FA-->>SE: Orders 
+    SE-->>BO: Orders  
+    BO-->>C: OK(Orders)
 ```
+
 ## Manage Get one OrderCreated using the ID
+
+Same to get one order created
+
 ```mermaid
 sequenceDiagram
 participant C as PaymentController
@@ -92,7 +212,10 @@ participant DA as Data
     BO -->> C: OK(Order?)
 ```
 ## Get Cancel Order
-### Note define waht to do if the order is Paid, in this case is assumed that if the order if PAID is not possible Cancel.
+
+To cancel an order you need to cancel in the provider, and also
+modified the value in the Database
+
 
 ```mermaid
 sequenceDiagram
@@ -118,3 +241,39 @@ participant PR as Proxy
     SP -->> BO: All Done  
     BO -->> C: OK(Done)
 ```
+## Get Cancel Order
+
+To pay an order you need to pay in the provider, and also
+modified the value in the Database
+
+
+```mermaid
+sequenceDiagram
+participant C as PaymentController
+participant BO as Payment BO
+participant SP as Service Provider
+participant FO as OrderFacade
+participant DA as Data
+participant PR as Proxy
+
+    C->>  BO: Pay Order by Id
+    BO ->> SP: Pay Order
+    SP ->> FO: Get Order  
+    FO ->> DA: Get Order with Id
+    DA -->> FO: Order
+    FO -->> SP: Order
+    SP->> PR: Pay Order in Provider
+    PR -->> SP: Done
+    SP ->> FO: Update Order to Cancel
+    FO ->> DA: Update Order to Cancel
+    DA -->>FO: Done
+    FO -->> SP: Done 
+    SP -->> BO: All Done  
+    BO -->> C: OK(Done)
+```
+
+## What is next
+
+- More XUnit test
+- Logger System to observability
+- Health Check
