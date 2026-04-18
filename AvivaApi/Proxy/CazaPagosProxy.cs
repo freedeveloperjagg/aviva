@@ -28,7 +28,7 @@ namespace AvivaApi.Proxy
         {
             // Create the object specific for caza pago
             var request = CazaPagosOrderPagoRequest.Factory(orderPago);
-            
+
             // Create the payload
             string json = JsonSerializer.Serialize(request);
             HttpContent payload = new StringContent(json, Encoding.UTF8, "application/json");
@@ -58,7 +58,7 @@ namespace AvivaApi.Proxy
                 if (orderProvider != null)
                 {
                     // Conver to aviva response ( OrderCreate object )
-                    return orderProvider.ConvertPago(ProviderName,orderPago);
+                    return orderProvider.ConvertPago(ProviderName, orderPago);
                 }
 
                 throw new ApplicationException($"Order Created Returned null. something is very wrong in proxy in {ProviderName}:{url}.");
@@ -66,7 +66,7 @@ namespace AvivaApi.Proxy
             }
             throw new ApplicationException($"Error reading the proxy in {url}, Error: {content}");
         }
-            
+
         public async Task PayOrderAsync(string orderProviderId)
         {
             // Get the provider by Name
@@ -93,7 +93,7 @@ namespace AvivaApi.Proxy
             HttpClient client = factory.CreateClient("Provider");
             client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
             client.BaseAddress = new Uri(prov.Url);
-            
+
             HttpResponseMessage httpResponse = await client.PutAsync($"cancellation?id={orderProviderId}", null);
             string content = await httpResponse.Content.ReadAsStringAsync();
             if (httpResponse.IsSuccessStatusCode)

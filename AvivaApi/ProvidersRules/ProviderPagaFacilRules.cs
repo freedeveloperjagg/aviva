@@ -1,6 +1,6 @@
 ﻿namespace AvivaApi.ProvidersRules
 {
-    public  class ProviderPagaFacilRules : IProviderRules
+    public class ProviderPagaFacilRules : IProviderRules
     {
         public string ProviderName { get; } = "PAGAFACIL";
 

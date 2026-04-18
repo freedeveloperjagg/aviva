@@ -1,10 +1,6 @@
 ﻿using AvivaApi.Facade;
 using AvivaApi.Proxy;
 using AvivaLibrary.Models;
-using AvivaLibrary.Models.Requests;
-using AvivaLibrary.Models.Responses;
-using System.Reflection;
-using System.Xml.XPath;
 
 namespace AvivaApi.Services
 {
@@ -26,8 +22,8 @@ namespace AvivaApi.Services
         {
             // Get the provider name and Id from DB
             OrderCreated? order = await ofacade.GetOrderById(id);
-            return order; 
-        }        
+            return order;
+        }
 
         public async Task<List<OrderCreated>> GetOrdersAsync()
         {
@@ -40,7 +36,7 @@ namespace AvivaApi.Services
         {
             // Get the proxy
             var proxy = factoryProxy.GetProxy(providerName);
-            
+
             // Create Order...
             OrderCreated response = await proxy.CreateOrderAsync(orderPago);
 
@@ -61,7 +57,7 @@ namespace AvivaApi.Services
             // Get the Order in DB to Get the Provider name and Id provider
             OrderCreated? dbresp = await ofacade.GetOrderById(id);
             if (dbresp == null) throw new ApplicationException($"Id {id} not found on the Orders");
-            
+
             // Get the proxy to be used
             var proxy = factoryProxy.GetProxy(dbresp.ProviderName);
             await proxy.CancelOrderAsync(dbresp.ProviderOrderId);

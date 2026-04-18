@@ -10,7 +10,7 @@ namespace AvivaApi.Proxy.Models.Response
         public string Status { get; set; } = string.Empty;
         public List<CazaPagosFee> Fees { get; set; } = [];
         public List<CazaPagosProduct> Products { get; set; } = [];
-        public List<CazaPagosTaxes> Taxes { get; set; } = []; 
+        public List<CazaPagosTaxes> Taxes { get; set; } = [];
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; } = string.Empty;
 
@@ -23,7 +23,7 @@ namespace AvivaApi.Proxy.Models.Response
                 ProviderOrderId = this.OrderId,
                 DateCreated = this.CreatedDate,
                 Fees = ConvertListOfFees(this.Fees),
-                Products = ConvertListOfProducts(this.Products,order.Products),
+                Products = ConvertListOfProducts(this.Products, order.Products),
                 Status = ConvertStatus(this.Status),
                 ProviderName = providerName
             };
@@ -44,7 +44,7 @@ namespace AvivaApi.Proxy.Models.Response
                 avFees.Add(new Fee() { Amount = fee.Amount, Name = fee.Tax });
             }
 
-            return avFees; 
+            return avFees;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace AvivaApi.Proxy.Models.Response
             List<Product> prods = [];
             foreach (var internalProd in avProd)
             {
-                var pProveedor = czProd.SingleOrDefault(x => x.Name.Trim() == internalProd.Name.Trim()) 
+                var pProveedor = czProd.SingleOrDefault(x => x.Name.Trim() == internalProd.Name.Trim())
                         ?? throw new ApplicationException($"The product {internalProd.Name} does not exists in the original order");
                 Product composeProd = new()
                 {

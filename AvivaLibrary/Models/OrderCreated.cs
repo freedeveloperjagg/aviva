@@ -10,7 +10,7 @@ namespace AvivaLibrary.Models
         /// </summary>
         [Required]
         public int Id { get; set; }
-        
+
         /// <summary>
         /// Provider Order Id 
         /// </summary>
@@ -26,22 +26,22 @@ namespace AvivaLibrary.Models
         /// Amount order
         /// </summary>
         public decimal Amount { get; set; }
-        
+
         /// <summary>
         /// Method of payment can be CASH / CREDIT / TRANSFER.
         /// </summary>
         public string Method { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Status of the order , PAID, CANCELLED, Etc.
         /// </summary>
         public string Status { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Fees inside the order
         /// </summary>
         public List<Fee> Fees { get; set; } = [];
-        
+
         /// <summary>
         /// Poduct inside the 
         /// </summary>
@@ -50,7 +50,7 @@ namespace AvivaLibrary.Models
         /// <summary>
         /// Creating Date. to add locally
         /// </summary>
-        public DateTime DateCreated { get; set;}
+        public DateTime DateCreated { get; set; }
 
         /// <summary>
         /// Creating Date. to add locally

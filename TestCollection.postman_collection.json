@@ -1,0 +1,860 @@
+{
+  "info": {
+    "_postman_id": "f169fad8-7a11-44fe-ade9-f8bb2a453e16",
+    "name": "TestCollection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "9058638"
+  },
+  "item": [
+    {
+      "name": "API",
+      "item": [
+        {
+          "name": "Local",
+          "item": [
+            {
+              "name": "GetProducts",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://localhost:7137/api/Products",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Products"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get all Orders Pago",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Orders",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get one order",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Order?Id=3",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Order"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "3"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Order",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "\r\n\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Cancel?Id=2",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Cancel"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Pay Order",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Pay?Id=3",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Pay"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "3"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order Cash -> PF",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Cash\",\r\n    \"products\": [\r\n        {\r\n            \"id\": 3,\r\n            \"name\": \"Lenovo 3450\",\r\n            \"unitPrice\": 350\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"name\": \"Head Set 450\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Create",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order CASH ->PF",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"CASH\",\r\n    \"products\": [\r\n        {\r\n            \"id\": 3,\r\n            \"name\": \"Lenovo 3450\",\r\n            \"unitPrice\": 350\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"name\": \"Head Set 450\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Create",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order CREDIT ->PF",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"CASH\",\r\n    \"products\": [\r\n        {\r\n            \"id\": 3,\r\n            \"name\": \"Lenovo 3450\",\r\n            \"unitPrice\": 350\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"name\": \"Head Set 450\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Create",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order NONE ->ERROR NO Provider Selected",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"NONE\",\r\n    \"products\": [\r\n        {\r\n            \"id\": 3,\r\n            \"name\": \"Lenovo 3450\",\r\n            \"unitPrice\": 350\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"name\": \"Head Set 450\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Create",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order CREDIT ->CP",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"CREDIT\",\r\n    \"products\": [\r\n        {\r\n            \"id\": 3,\r\n            \"name\": \"Lenovo 3450\",\r\n            \"unitPrice\": 3500\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"name\": \"Head Set 450\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Create",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Orde TRANSFER -> CP",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"TRANSFER\",\r\n    \"products\": [\r\n        {\r\n            \"id\": 3,\r\n            \"name\": \"Lenovo 3450\",\r\n            \"unitPrice\": 3500\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"name\": \"Head Set 450\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7137/api/Payment/Create",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7137",
+                  "path": [
+                    "api",
+                    "Payment",
+                    "Create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Mystery",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Provider",
+          "item": [
+            {
+              "name": "Get Order by ID CazaPago",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/Order/Zcvi3W4CQR",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order",
+                    "Zcvi3W4CQR"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order PagaFacil Cash",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Cash\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Toro Parado\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-paga-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-paga-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order PagaFacil Card",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Card\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Toro Parado\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-paga-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-paga-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order PagaFacil Transfer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Transfer\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Toro Parado\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-paga-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-paga-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order PagaFacil  None",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Transfer\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Toro Parado\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-paga-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-paga-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order Caza Pagos Credit Card",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"CreditCard\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order Caza Pagos Transfer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Transfer\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order Caza Pagos Cash",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"Cash\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Toro Parado\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Post Order Caza Pagos  None",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"None\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Toro Sentado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Toro Parado\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/Order",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "Order"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Pay Order -> PF",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"cash\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Pescado Salado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Pescado Dulce\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-paga-chg-aviva.azurewebsites.net/pay?Id=226c69f5-863f-483a-996e-9e0608fd0314",
+                  "protocol": "https",
+                  "host": [
+                    "app-paga-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "pay"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "226c69f5-863f-483a-996e-9e0608fd0314"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Pay Order -> CP",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"cash\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Pescado Salado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Pescado Dulce\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/payment?Id=5rLcD4FXck",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "payment"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "5rLcD4FXck"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Order -> CP",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"cash\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Pescado Salado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Pescado Dulce\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-caza-chg-aviva.azurewebsites.net/cancellation?Id=5rLcD4FXck",
+                  "protocol": "https",
+                  "host": [
+                    "app-caza-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "cancellation"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "5rLcD4FXck"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Order => PF",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "apikey-1cnmoisyhkif7s",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"method\": \"cash\",\r\n    \"products\": [\r\n        {\r\n            \"name\": \"Pescado Salado\",\r\n            \"unitPrice\": 250\r\n        },\r\n        {\r\n            \"name\": \"Pescado Dulce\",\r\n            \"unitPrice\": 2350\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://app-paga-chg-aviva.azurewebsites.net/cancel?Id=a446ed17-13ea-473c-989d-d228ce178c19",
+                  "protocol": "https",
+                  "host": [
+                    "app-paga-chg-aviva",
+                    "azurewebsites",
+                    "net"
+                  ],
+                  "path": [
+                    "cancel"
+                  ],
+                  "query": [
+                    {
+                      "key": "Id",
+                      "value": "a446ed17-13ea-473c-989d-d228ce178c19"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

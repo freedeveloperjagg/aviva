@@ -57,7 +57,7 @@ namespace AvivaApi.Proxy.Models.Requests
                 //    }
                 default:
                     {
-                        throw new ArgumentException($"Payment Method: {met} not supported by Caza Pagos");
+                        throw new ArgumentException($"Payment Method: {met} not supported by Paga Facil");
                     }
             }
         }

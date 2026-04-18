@@ -16,7 +16,7 @@ namespace AvivaApi.Facade
         /// </summary>
         /// <returns></returns>
         Task<List<OrderCreated>> GetAllOrders();
-        
+
         /// <summary>
         /// Get one order by Id
         /// </summary>
@@ -30,7 +30,7 @@ namespace AvivaApi.Facade
         /// <param name="orderCreated"></param>
         /// <returns></returns>
         Task<int> InsertOrderCreatedInTable(OrderCreated orderCreated);
-        
+
         /// <summary>
         /// Mark the order as PAID
         /// </summary>

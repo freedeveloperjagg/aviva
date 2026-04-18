@@ -17,7 +17,7 @@ namespace AvivaApi.Proxy.Models.Response
 
         public OrderCreated ConvertPago(string providerName, OrderPago order)
         {
-            OrderCreated orderCreated = new ()
+            OrderCreated orderCreated = new()
             {
                 Amount = this.Amount,
                 Method = ConvertMethod(this.Method),
@@ -73,7 +73,19 @@ namespace AvivaApi.Proxy.Models.Response
         /// <returns></returns>
         private static string ConvertMethod(string method)
         {
-            return method.ToUpperInvariant();
+            switch (method.ToUpperInvariant())
+            {
+                case "CARD":
+                    {
+                        return "CREDIT";
+                    }
+                case "CASH": { return "CASH"; }
+                default:
+                    {
+                        throw new ArgumentException($"Payment Method: {method} not supported by Aviva");
+                    }
+
+            }
         }
     }
 }

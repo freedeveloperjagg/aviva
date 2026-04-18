@@ -11,50 +11,64 @@ namespace TestAvivaApi.Proxies;
 public class CazaPagosProxyTests
 {
 
-    CConfig cconfig;
-    public CazaPagosProxyTests()
+    readonly ITestOutputHelper output;
+    readonly CConfig cconfig;
+    public CazaPagosProxyTests(ITestOutputHelper xoutput)
     {
         IConfiguration config = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
         cconfig = new(config);
+        this.output = xoutput;
     }
 
-    [Fact]
-    public async Task CreateOrderAsync_ReturnsOrderCreated_OnSuccess()
-    {
-        // 1. Arrange: Mock the HttpMessageHandler
-        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-        // Response...
-        string jsonResponse = """
+    // Caza pagos response
+    string httpContentOkResponse = """
             {
-                "orderId": "lyxdDUiTuO",
-                "amount": 293.25,
+                "orderId": "Y6SbpALt1t",
+                "amount": 2615,
                 "status": "Pending",
-                "method": "CreditCard",
+                "method": "METHODPAY",
                 "fees": [
                     {
-                        "title": "Sales Commision",
-                        "amount": 5
+                        "name": "Sales Commision",
+                        "amount": 15
                     }
                 ],
                 "taxes": [
-                    {
-                        "tax": "IVA",
-                        "amount": 38.25
-                    }
+                   {
+                     "tax": "Iva",
+                     "amount": 10
+                   }
                 ],
                 "products": [
                     {
                         "name": "Toro Sentado",
                         "unitPrice": 250
+                    },
+                    {
+                        "name": "Toro Parado",
+                        "unitPrice": 2350
                     }
                 ],
-                "createdDate": "2026-04-17T02:37:02.1041954+00:00",
-                "createdBy": "apikey-1cnmoisyhkif7s"
+                "createdDate": "2026-04-17T03:16:07.9603899+00:00",
+                "createdBy": "apikey-xxxxx"
             }
             """;
-            
-        // Setup deterministic response for any PostAsync call
+    [Theory]
+    [InlineData("CASH", null, true, "Payment Method: CASH ")]
+    [InlineData("CREDIT", "CreditCard", false, "")]
+    [InlineData("TRANSFER", "Transfer", false, "")]
+    public async Task CreateOrderAsync_ValidatesPaymentMethod(
+     string methodaviva,
+     string? methodcazaPagos,
+     bool expectException,
+     string expectedExceptionMessage)
+    {
+        // 1. Arrange: Mock the HttpMessageHandler
+        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        // Change the response based on the method to simulate different scenarios
+        httpContentOkResponse = httpContentOkResponse.Replace("METHODPAY", methodcazaPagos);
+
         handlerMock
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -65,38 +79,49 @@ public class CazaPagosProxyTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(jsonResponse) // Mock JSON response
+                Content = new StringContent(httpContentOkResponse)
             });
 
-        // 2. Arrange: Setup IHttpClientFactory to return a client using the mock handler
+        // 2. Arrange: Setup IHttpClientFactory
         var httpClient = new HttpClient(handlerMock.Object);
         var factoryMock = new Mock<IHttpClientFactory>();
         factoryMock.Setup(f => f.CreateClient("Provider")).Returns(httpClient);
-      
+
         var proxy = new CazaPagosProxy(factoryMock.Object, cconfig);
-        var orderPago = new OrderPago() 
-        { 
-            Id = 10,
-            Method = "CREDIT",
-            Products = [ new(){ Name="Toro Sentado", UnitPrice = 250 }]
-        }; // Fill with required data for factory
 
-        // Act
-        var result = await proxy.CreateOrderAsync(orderPago);
+        var orderPago = new OrderPago
+        {
+            Method = methodaviva,
+            Products =
+            [
+                new() { Name = "Toro Sentado", UnitPrice = 250 },
+                new() { Name = "Toro Parado",  UnitPrice = 2360 }
+            ]
+        };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(result.Method, orderPago.Method);
-        Assert.True(result.Fees.Count == 2);
-        Assert.True(result.Products.Count == 1);
-        handlerMock.Protected().Verify(
-            "SendAsync",
-            Times.Once(),
-            ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post),
-            ItExpr.IsAny<CancellationToken>()
-        );
+        // 3. Act & Assert
+        if (expectException)
+        {
+            var ex = await Assert.ThrowsAsync<ArgumentException>(
+                async () => await proxy.CreateOrderAsync(orderPago));
+
+            Assert.Contains(expectedExceptionMessage, ex.Message);
+        }
+        else
+        {
+            // Should complete without throwing and return 200 OK
+            var result = await proxy.CreateOrderAsync(orderPago);
+            Assert.NotNull(result);
+            Assert.IsType<OrderCreated>(result);
+            output.WriteLine($"Received OrderCreated with Method: {result.Method}");
+            Assert.Equal(methodaviva, result.Method);
+
+        }
     }
+
 }
+
+
 
 
 
