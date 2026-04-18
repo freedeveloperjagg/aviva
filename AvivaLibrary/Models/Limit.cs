@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AvivaLibrary.Models
+﻿namespace AvivaLibrary.Models
 {
     public class Limit
     {

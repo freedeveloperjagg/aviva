@@ -32,14 +32,30 @@ flowchart LR
  We should standardize the names in the program, 
  because they are strings and easy to mistakes.
 
- ### PAYMENT METHOD
+ ### RULES PER PROVIDER
 
-|Aviva|PagaFacil|CazaPagos|
-|--|--|--|
-|x|None|None|
-|CASH|Cash|x|
-|CREDIT|Card|CreditCard|
-|TRANSFER|x|Transfer|
+ |Rule for Method|PagaFacil|CazaPagos|
+ |--|--|--|
+ |CASH|YES|NO|
+ |CREDIT|YES|YES|
+ |TRANSFER|NO|YES|
+
+ NOTE: The methods are implemented in the API , but if there is not rules for the method
+ in provider, then the provider is not selected for that order, 
+ and the program select the other provider if it is possible. If there is not any provider with the method, then the program return an error to the user.
+ 
+ ### PAYMENT METHODS IN API
+
+|Aviva(input/output)|PagaFacil(input/output)|CazaPagos(input/output)|Note|
+|--|--|--|--|
+|x|None|None|Not supported|
+|CASH|Cash|x|Cash payment|
+|CREDIT|Card|CreditCard|Credit card payment|
+|TRANSFER|Note 1|Transfer|Bank transfer payment|
+
+NOTE: Note 1: PagaFacil has defined TRANSFER in the API interface but the API rejected
+your call because there is not rules defined in Paga Facil for Transfer
+
 
 ### PROVIDER NAME
 

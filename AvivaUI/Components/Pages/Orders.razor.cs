@@ -55,7 +55,7 @@ public partial class Orders(IOrderPagoServices xpagoService)
         try
         {
 
-            if (order.Status == "Paid") return;
+            if (CheckIsPaidorCancelled(order.Status)) return;
 
             bool? confirmed = await dialogService.Confirm(
                 $"Mark Order #{order.Id} — {order.ProviderName} — as paid?",
@@ -74,13 +74,13 @@ public partial class Orders(IOrderPagoServices xpagoService)
                 // Refresh the orders
 
 
-                order.Status = "Paid";
+                order.Status = "PAID";
 
                 notificationService.Notify(new NotificationMessage
                 {
                     Severity = NotificationSeverity.Success,
                     Summary = "Payment recorded",
-                    Detail = $"Order #{order.Id} has been marked as paid.",
+                    Detail = $"Order #{order.Id} has been marked as PAID.",
                     Duration = 3000
                 });
 
@@ -93,7 +93,7 @@ public partial class Orders(IOrderPagoServices xpagoService)
             {
                 Severity = NotificationSeverity.Error,
                 Summary = "Paid Unsuccesful",
-                Detail = $"Order #{order.Id} was not paid: {ex.Message}",
+                Detail = $"Order #{order.Id} was not PAID: {ex.Message}",
                 Duration = 113000
             });
         }
@@ -104,7 +104,7 @@ public partial class Orders(IOrderPagoServices xpagoService)
         try
         {
 
-            if (order.Status == "CANCELLED") return;
+            if (CheckIsPaidorCancelled(order.Status)) return;
 
             bool? confirmed = await dialogService.Confirm(
                 $"Mark Order #{order.Id} — {order.ProviderName} — as Cancelled?",
@@ -158,7 +158,7 @@ public partial class Orders(IOrderPagoServices xpagoService)
             || status.Equals("CANCELLED", StringComparison.InvariantCultureIgnoreCase);
         return active;
     }
-       
+
 
     //private static bool CheckIsCancelled(string status)
     //{

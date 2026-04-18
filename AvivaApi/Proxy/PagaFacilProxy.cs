@@ -25,9 +25,9 @@ namespace AvivaApi.Proxy
             var request = PagaFacilOrderCreateRequest.Factory(orderPago);
 
             // Create the payload
-            string json = JsonSerializer.Serialize(request,options);
+            string json = JsonSerializer.Serialize(request, options);
             HttpContent payload = new StringContent(json, Encoding.UTF8, "application/json");
-            HttpClient client = HttpCreateClient(payload);          
+            HttpClient client = HttpCreateClient(payload);
 
             var result = await client.PostAsync("Order", payload);
             string content = await result.Content.ReadAsStringAsync();
@@ -46,15 +46,15 @@ namespace AvivaApi.Proxy
             throw new ApplicationException($"Error reading the proxy in {client.BaseAddress}Order, Error: {content}");
         }
 
-           public async Task PayOrderAsync(string orderProviderId)
+        public async Task PayOrderAsync(string orderProviderId)
         {
             // Get the provider by Name
-            var prov = cconfig.ProveedoresSettings.First(x => x.Nombre.ToUpperInvariant() == ProviderName);
+            var prov = cconfig.ProveedoresSettings.First(x => x.Nombre.Equals(ProviderName, StringComparison.InvariantCultureIgnoreCase));
             HttpClient client = factory.CreateClient("Provider");
             client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
             client.BaseAddress = new Uri(prov.Url);
 
-            HttpResponseMessage httpResponse = await client.PutAsync($"payment?id={orderProviderId}", null);
+            HttpResponseMessage httpResponse = await client.PutAsync($"pay?id={orderProviderId}", null);
             string content = await httpResponse.Content.ReadAsStringAsync();
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -74,7 +74,7 @@ namespace AvivaApi.Proxy
         public async Task CancelOrderAsync(string orderProviderId)
         {
             // Get the provider by Name
-            var prov = cconfig.ProveedoresSettings.First(x => x.Nombre.ToUpperInvariant() == ProviderName);
+            var prov = cconfig.ProveedoresSettings.First(x => x.Nombre.Equals(ProviderName, StringComparison.InvariantCultureIgnoreCase));
             HttpClient client = factory.CreateClient("Provider");
             client.DefaultRequestHeaders.Add("x-api-key", prov.Key);
             client.BaseAddress = new Uri(prov.Url);

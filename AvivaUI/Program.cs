@@ -26,9 +26,9 @@ builder.Services.AddHttpClient("AvivaApi", client =>
     client.BaseAddress = new Uri(cconfig.ApiAddress);
 });
 
-builder.Services.AddScoped<IProductsProxy,ProductsProxy>();
-builder.Services.AddScoped<IProductServices,ProductServices>();
-builder.Services.AddScoped<IOrderPagoProxy,OrderPagoProxy>();
+builder.Services.AddScoped<IProductsProxy, ProductsProxy>();
+builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<IOrderPagoProxy, OrderPagoProxy>();
 builder.Services.AddScoped<IOrderPagoServices, OrderPagoServices>();
 
 

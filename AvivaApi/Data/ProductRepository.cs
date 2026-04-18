@@ -1,9 +1,9 @@
-﻿ using AvivaLibrary.Models;
-    using Microsoft.EntityFrameworkCore;
+﻿using AvivaLibrary.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AvivaApi.Data
 {
-     public class ProductRepository
+    public class ProductRepository
     {
         private readonly AvivaDbContext db;
 

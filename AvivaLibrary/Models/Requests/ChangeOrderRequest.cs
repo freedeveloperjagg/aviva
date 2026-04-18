@@ -6,7 +6,7 @@ namespace AvivaLibrary.Models.Requests
         /// <summary>
         /// Id Order to cancel
         /// </summary>
-        public string IdOrder {  get; set; } = string.Empty;
+        public string IdOrder { get; set; } = string.Empty;
 
         /// <summary>
         /// Proveedor where the order was created

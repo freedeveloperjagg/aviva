@@ -54,7 +54,7 @@ namespace AvivaApi.Facade
 
         public async Task PaidOrder(int id)
         {
-            await rep.PaidAsync(id); 
+            await rep.PaidAsync(id);
         }
     }
 }

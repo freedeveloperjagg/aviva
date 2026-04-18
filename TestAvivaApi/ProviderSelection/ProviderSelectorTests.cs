@@ -7,11 +7,11 @@
 
     namespace MyApi.Tests
     {
-        public class ProviderSelectorIntegrationTests
+        public class ProviderSelectorTests
         {
             private readonly ProviderSelector selector;
 
-            public ProviderSelectorIntegrationTests()
+            public ProviderSelectorTests()
             {
                 // Here you must initialize with your real provider rules
                 // Replace with actual provider rules from your production code
@@ -36,13 +36,13 @@
             }
 
             [Theory]
-            [InlineData("CASH", 10000,  "PAGAFACIL")]
-            [InlineData("CASH", 1000,   "PAGAFACIL")]
+            [InlineData("CASH", 10000, "PAGAFACIL")]
+            [InlineData("CASH", 1000, "PAGAFACIL")]
             [InlineData("CREDIT", 1000, "PAGAFACIL")]
             [InlineData("CREDIT", 1520, "PAGAFACIL")]
-            [InlineData("CREDIT", 6000,    "CAZAPAGOS")]
+            [InlineData("CREDIT", 6000, "CAZAPAGOS")]
             [InlineData("TRANSFER", 10000, "CAZAPAGOS")]
-            [InlineData("TRANSFER", 10,    "CAZAPAGOS")]
+            [InlineData("TRANSFER", 10, "CAZAPAGOS")]
             public void GetBetterProvider_ValidInputs_ReturnsExpectedProvider(string method, decimal amount, string expectedProvider)
             {
                 // Act

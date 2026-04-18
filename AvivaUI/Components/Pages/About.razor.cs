@@ -25,7 +25,7 @@ namespace AvivaUI.Components.Pages
         protected async Task CheckOdooConectivityAsync()
         {
             try
-            { 
+            {
                 connectivity = "processing... wait";
                 connectivity = await pservices.CheckConnectionAliveAsync();
                 StateHasChanged();
