@@ -1,6 +1,5 @@
 ﻿using AvivaApi.Bo;
 using AvivaLibrary.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AvivaApi.Controllers
@@ -16,11 +15,11 @@ namespace AvivaApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Alive")]
-        public IActionResult GetAlive() 
+        public IActionResult GetAlive()
         {
             return Ok("I am Alive...");
-        }        
-        
+        }
+
         /// <summary>
         /// Get the list of all products in the DB
         /// </summary>

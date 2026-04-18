@@ -1,16 +1,11 @@
 ﻿namespace AvivaApi.Proxy
-{   
+{
     /// <summary>
     /// Select the proxy according to the existsnt provider
     /// </summary>
-    public class ProxyFactory : IProxyFactory
+    public class ProxyFactory(IServiceProvider xserviceProvider) : IProxyFactory
     {
-        private readonly IServiceProvider serviceProvider;
-
-        public ProxyFactory(IServiceProvider xserviceProvider)
-        {
-            serviceProvider = xserviceProvider;
-        }
+        private readonly IServiceProvider serviceProvider = xserviceProvider;
 
         /// <summary>
         /// The magic happen here using.
@@ -20,7 +15,8 @@
         /// <exception cref="ArgumentException"></exception>
         public IProxy GetProxy(string providerName)
         {
-            return providerName.ToUpper() switch
+            providerName = providerName.ToUpperInvariant();
+            return providerName switch
             {
                 "PAGAFACIL" => serviceProvider.GetRequiredService<PagaFacilProxy>(),
                 "CAZAPAGOS" => serviceProvider.GetRequiredService<CazaPagosProxy>(),

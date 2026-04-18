@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
+    <File Path="TestCollection.postman_collection.json" />
   </Folder>
   <Project Path="AvivaApi/AvivaApi.csproj" Id="60065fbd-a17d-4127-b0a2-d38bee607e4c" />
   <Project Path="AvivaLibrary/AvivaLibrary.csproj" Id="e51ebf05-cc50-4edf-bbdd-a1f17ad88ddd" />

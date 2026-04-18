@@ -5,7 +5,7 @@ using AvivaLibrary.Models;
 namespace AvivaApi.Bo
 {
     public class PaymentBo(
-       // IPaymentCompaniesFacade xfacade,
+        // IPaymentCompaniesFacade xfacade,
         IProviderSelector xselector,
         IProviderService providerService
         ) : IPaymentBo
@@ -14,7 +14,7 @@ namespace AvivaApi.Bo
         readonly IProviderService service = providerService;
         readonly IProviderSelector selector = xselector;
 
- 
+
         /// <summary>
         /// We need to made the payment to the entity that cost less, 
         /// so we need to calculate the total cost of the order and then get the 
@@ -33,14 +33,13 @@ namespace AvivaApi.Bo
 
             // Then we need to know who is the better provider for this order
             string providerName = selector.GetBetterProvider(orderPago.Method, totalCost);
-                        
+
             // See if  provider was elected
             if (string.IsNullOrEmpty(providerName))
             {
                 throw new Exception("No provider was elected");
             }
 
-           
             // Call the service to made the payment
             OrderCreated? order = await service.CreateOrderAsync(providerName, orderPago);
             return order;
@@ -53,7 +52,7 @@ namespace AvivaApi.Bo
         /// <returns></returns>
         public async Task<OrderCreated?> GetOrderByIdAsync(int id)
         {
-            OrderCreated? response = await service.GetOrderByIdAsync(id)   ;
+            OrderCreated? response = await service.GetOrderByIdAsync(id);
             return response;
         }
 

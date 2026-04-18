@@ -5,7 +5,7 @@ namespace TestAvivaApi.ProviderSelection
     public class ProviderPagaFacilRulesTest(ITestOutputHelper xoutput)
     {
         private readonly ITestOutputHelper output = xoutput;
-        private readonly ProviderPagaFacilRules rules = new ();
+        private readonly ProviderPagaFacilRules rules = new();
 
         [Fact]
         public void CalculateFees_AmountZero_ThrowsException()

@@ -1,7 +1,5 @@
 ﻿using AvivaApi.Bo;
 using AvivaLibrary.Models;
-using AvivaLibrary.Models.Requests;
-using AvivaLibrary.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -38,7 +36,7 @@ namespace AvivaApi.Controllers
         /// <param name="id">Order ID</param>
         /// <returns>One OrderResponse</returns>
         [HttpGet("Order")]
-        public async Task<IActionResult> GetOrderAsync([FromQuery]int id)
+        public async Task<IActionResult> GetOrderAsync([FromQuery] int id)
         {
             try
             {
@@ -69,7 +67,7 @@ namespace AvivaApi.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
- 
+
         /// <summary>
         /// Cancel the order by Id an provider Name
         /// </summary>

@@ -9,7 +9,7 @@ namespace AvivaUI.Services
         /// </summary>
         /// <returns></returns>
         Task<string> CheckConnectionAliveAsync();
-        
+
         /// <summary>
         /// Get all the products
         /// </summary>

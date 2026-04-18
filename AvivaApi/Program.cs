@@ -60,7 +60,7 @@ builder.Services.AddDbContext<AvivaDbContext>(options =>
 // Provider are added automatically to he selector collection!
 builder.Services.AddScoped<IProviderRules, ProviderPagaFacilRules>();
 builder.Services.AddScoped<IProviderRules, ProviderCazaPagosRules>();
-builder.Services.AddScoped<IProviderSelector,ProviderSelector>();
+builder.Services.AddScoped<IProviderSelector, ProviderSelector>();
 
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<ProductRepository>();

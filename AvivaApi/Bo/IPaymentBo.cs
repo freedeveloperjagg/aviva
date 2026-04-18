@@ -1,6 +1,4 @@
 ﻿using AvivaLibrary.Models;
-using AvivaLibrary.Models.Requests;
-using AvivaLibrary.Models.Responses;
 
 namespace AvivaApi.Bo
 {
@@ -11,6 +9,6 @@ namespace AvivaApi.Bo
         Task<List<OrderCreated>> GetOrdersAsync();
         Task PayOrderAsync(int id);
         Task CancelOrderAsync(int id);
-       
+
     }
 }

@@ -3,7 +3,7 @@
     public interface IProviderRules
     {
         public string ProviderName { get; }
-        
+
         /// <summary>
         /// Return if the method is suitable for the form of payment
         /// andthe fee amount for this provider.
@@ -15,6 +15,6 @@
         /// decimal the amount of the fees
         /// if false the returned fee is always 0
         /// </returns>
-        (bool,decimal)  CalculateFees(string method, decimal amount);
+        (bool, decimal) CalculateFees(string method, decimal amount);
     }
 }

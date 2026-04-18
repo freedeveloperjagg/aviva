@@ -41,8 +41,8 @@ namespace AvivaUI.Components.Pages
                     Detail = $"Error getting the products  {ex.Message}.",
                     Duration = 15000
                 });
-            }          
-    
+            }
+
         }
 
         private void OnRowSelect(Product row) => StateHasChanged();
@@ -145,7 +145,7 @@ namespace AvivaUI.Components.Pages
                     Detail = ex.Message,
                     Duration = 5000
                 });
-            }        
+            }
         }
 
         private bool IsProductAvailable(Product product)

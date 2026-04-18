@@ -7,7 +7,7 @@ namespace AvivaApi.Services
         Task<List<OrderCreated>> GetOrdersAsync();
         Task<OrderCreated?> GetOrderByIdAsync(int id);
         Task<OrderCreated?> CreateOrderAsync(string providerName, OrderPago orderPago);
-        
+
         /// <summary>
         /// Cancel the order using the internal Id
         /// This cancel the order in the provider and internally.

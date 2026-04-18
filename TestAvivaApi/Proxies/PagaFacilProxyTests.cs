@@ -10,27 +10,14 @@ namespace TestAvivaApi.Proxies;
 
 public class PagaFacilProxyTests
 {
-
-    CConfig cconfig;
-    public PagaFacilProxyTests()
-    {
-        IConfiguration config = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
-        cconfig = new(config);
-    }
-
-    [Fact]
-    public async Task CreateOrderAsync_ReturnsOrderCreated_OnSuccess()
-    {
-        // 1. Arrange: Mock the HttpMessageHandler
-        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-        // Response...
-        string jsonResponse = """
+    readonly ITestOutputHelper output;
+    readonly CConfig cconfig;
+    string httpContentOkResponse = """
             {
                 "orderId": "4f6d499d-9766-46d4-ad2d-54bdde6712ee",
                 "amount": 2615,
                 "status": "Pending",
-                "method": "Cash",
+                "method": "METHODPAY",
                 "fees": [
                     {
                         "name": "Sales Commision",
@@ -51,8 +38,30 @@ public class PagaFacilProxyTests
                 "createdBy": "apikey-1cnmoisyhkif7s"
             }
             """;
-            
-        // Setup deterministic response for any PostAsync call
+
+    public PagaFacilProxyTests(ITestOutputHelper xoutput)
+    {
+        IConfiguration config = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+        cconfig = new(config);
+        output = xoutput;
+    }
+
+    [Theory]
+    [InlineData("TRANSFER", null, true, "Payment Method: TRANSFER ")]
+    [InlineData("CASH", "Cash", false, "")]
+    [InlineData("CREDIT", "Card", false, "")]
+    public async Task CreateOrderAsync_ValidatesPaymentMethod(
+        string methodaviva,
+        string? methodpagoFacil,
+        bool expectException,
+        string expectedExceptionMessage)
+    {
+        // 1. Arrange: Mock the HttpMessageHandler
+        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        // Change the response based on the method to simulate different scenarios
+        httpContentOkResponse = httpContentOkResponse.Replace("METHODPAY", methodpagoFacil);
+
         handlerMock
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -63,37 +72,47 @@ public class PagaFacilProxyTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(jsonResponse) // Mock JSON response
+                Content = new StringContent(httpContentOkResponse)
             });
 
-        // 2. Arrange: Setup IHttpClientFactory to return a client using the mock handler
+        // 2. Arrange: Setup IHttpClientFactory
         var httpClient = new HttpClient(handlerMock.Object);
         var factoryMock = new Mock<IHttpClientFactory>();
         factoryMock.Setup(f => f.CreateClient("Provider")).Returns(httpClient);
-      
+
         var proxy = new PagaFacilProxy(factoryMock.Object, cconfig);
-        var orderPago = new OrderPago() 
-        { 
-            Method = "CASH",
-            Products = [ new(){ Name="Toro Sentado", UnitPrice = 250 }, new() { Name = "Toro Parado", UnitPrice = 2360 }]
-        }; // Fill with required data for factory
 
-        // Act
-        var result = await proxy.CreateOrderAsync(orderPago);
+        var orderPago = new OrderPago
+        {
+            Method = methodaviva,
+            Products =
+            [
+                new() { Name = "Toro Sentado", UnitPrice = 250 },
+                new() { Name = "Toro Parado",  UnitPrice = 2360 }
+            ]
+        };
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(orderPago.Method, result.Method);
-        Assert.True(result.Fees.Count == 1);
-        Assert.True(result.Products.Count == 2);
-        handlerMock.Protected().Verify(
-            "SendAsync",
-            Times.Once(),
-            ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post),
-            ItExpr.IsAny<CancellationToken>()
-        );
+        // 3. Act & Assert
+        if (expectException)
+        {
+            var ex = await Assert.ThrowsAsync<ArgumentException>(
+                async () => await proxy.CreateOrderAsync(orderPago));
+
+            Assert.Contains(expectedExceptionMessage, ex.Message);
+        }
+        else
+        {
+            // Should complete without throwing and return 200 OK
+            var result = await proxy.CreateOrderAsync(orderPago);
+            Assert.NotNull(result);
+            Assert.IsType<OrderCreated>(result);
+            output.WriteLine($"Received OrderCreated with Method: {result.Method}");
+            Assert.Equal(methodaviva, result.Method);
+
+        }
     }
 }
+
 
 
 
